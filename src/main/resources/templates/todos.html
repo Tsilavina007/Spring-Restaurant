@@ -1,0 +1,242 @@
+<!-- <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Todos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 50px auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .priority-high {
+            color: red;
+        }
+        .priority-medium {
+            color: orange;
+        }
+        .priority-low {
+            color: green;
+        }
+        .status-done {
+            color: green;
+            font-weight: bold;
+        }
+        .status-inprogress {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Liste des Todos</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Date de création</th>
+            <th>Deadline</th>
+            <th>Date d'exécution</th>
+            <th>Priorité</th>
+            <th>Statut</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="todo : ${todos}">
+            <td th:text="${todo.title}"></td>
+            <td th:text="${todo.description}"></td>
+            <td th:text="${todo.createDate}"></td>
+            <td th:text="${todo.deadline}"></td>
+            <td th:text="${todo.executionDate}"></td>
+            <td th:text="${todo.priority}" 
+                th:classappend="${todo.priority == 'HIGH' ? 'priority-high' : (todo.priority == 'MEDIUM' ? 'priority-medium' : 'priority-low')}"></td>
+            <td th:text="${todo.status}" 
+                th:classappend="${todo.status == 'DONE' ? 'status-done' : 'status-inprogress'}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Todos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Styles personnalisés */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 50px auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .priority-high {
+            color: red;
+        }
+        .priority-medium {
+            color: orange;
+        }
+        .priority-low {
+            color: green;
+        }
+        .status-done {
+            color: green;
+            font-weight: bold;
+        }
+        .status-inprogress {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Liste des Todos</h1>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addTodoModal">
+        Ajouter un Todo
+    </button>
+    <table>
+        <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Date de création</th>
+            <th>Deadline</th>
+            <th>Date d'exécution</th>
+            <th>Priorité</th>
+            <th>Statut</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="todo : ${todos}">
+            <td th:text="${todo.title}"></td>
+            <td th:text="${todo.description}"></td>
+            <td th:text="${todo.createDate}"></td>
+            <td th:text="${todo.deadline}"></td>
+            <td th:text="${todo.executionDate}"></td>
+            <td th:text="${todo.priority}" 
+                th:classappend="${todo.priority == 'HIGH' ? 'priority-high' : (todo.priority == 'MEDIUM' ? 'priority-medium' : 'priority-low')}"></td>
+            <td th:text="${todo.status}" 
+                th:classappend="${todo.status == 'DONE' ? 'status-done' : 'status-inprogress'}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addTodoModal" tabindex="-1" role="dialog" aria-labelledby="addTodoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTodoModalLabel">Ajouter un Todo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="/todos/add" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="title">Titre</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="deadline">Deadline</label>
+                        <input type="datetime-local" class="form-control" id="deadline" name="deadline">
+                    </div>
+                    <div class="form-group">
+                        <label for="executionDate">Date d'exécution</label>
+                        <input type="datetime-local" class="form-control" id="executionDate" name="executionDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priorité</label>
+                        <select class="form-control" id="priority" name="priority">
+                            <option value="HIGH">Haute</option>
+                            <option value="MEDIUM">Moyenne</option>
+                            <option value="LOW">Basse</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Statut</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="DONE">Fait</option>
+                            <option value="IN_PROGRESS">En cours</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
