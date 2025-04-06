@@ -2,19 +2,16 @@ package hei.spring.todo.service;
 
 import hei.spring.todo.dao.operations.IngredientCrudOperations;
 import hei.spring.todo.dao.operations.IngredientPriceCrudOperations;
+import hei.spring.todo.dao.operations.StockMovementCrudOperations;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.IngredientPrice;
-import hei.spring.todo.model.Price;
+import hei.spring.todo.model.StockMovement;
 import hei.spring.todo.service.exception.ClientException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,6 +19,7 @@ import java.util.List;
 public class IngredientService {
 	private final IngredientCrudOperations ingredientCrudOperations;
 	private final IngredientPriceCrudOperations ingredientPriceCrudOperations;
+	private final StockMovementCrudOperations stockMovementCrudOperations;
 
 	public List<Ingredient> getIngredientsByPrices(Integer page, Integer size, Double priceMinFilter, Double priceMaxFilter) {
 		if (priceMinFilter != null && priceMinFilter < 0) {
@@ -44,7 +42,7 @@ public class IngredientService {
 		if (priceMinFilter == null && priceMaxFilter == null) {
 			return ingredientCrudOperations.getAll(page, size);
 		}
-		// TODO : paginate from restController OR filter from repository directly
+
 		List<Ingredient> ingredients = ingredientCrudOperations.getAll(1, 500);
 
 		return ingredients.stream()
@@ -77,7 +75,6 @@ public class IngredientService {
 	}
 
 	public Ingredient addPrices(String ingredientId, List<IngredientPrice> pricesToAdd) {
-		System.out.println(pricesToAdd);
 		if (pricesToAdd.size() < 1 || pricesToAdd.size() == 1 && pricesToAdd.get(0).equals(new IngredientPrice())) {
 			return null;
 		}
@@ -92,6 +89,27 @@ public class IngredientService {
 		System.out.println(ingredientPriceSaved);
 		if (ingredientPriceSaved.size() > 0) {
 			ingredient.addPrices(ingredientPriceSaved);
+			return ingredient;
+		}
+		return null;
+	}
+
+	public Ingredient addStocks(String ingredientId, List<StockMovement> stocksToAdd) {
+		if (stocksToAdd.size() < 1 || stocksToAdd.size() == 1 && stocksToAdd.get(0).equals(new StockMovement())) {
+			return null;
+		}
+		Ingredient ingredient = ingredientCrudOperations.findById(ingredientId);
+		stocksToAdd.forEach(stock -> {
+			if (stock.getCreationDatetime() == null) {
+				stock.setCreationDatetime(Instant.now());
+			}
+		});
+
+		stocksToAdd.forEach(stock -> stock.setIngredient(ingredient));
+		System.out.println(stocksToAdd);
+		List<StockMovement> stockMovementSaved = stockMovementCrudOperations.saveAll(stocksToAdd);
+		if (stockMovementSaved.size() > 0) {
+			ingredient.addStockMovements(stockMovementSaved);
 			return ingredient;
 		}
 		return null;

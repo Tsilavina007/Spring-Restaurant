@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @Getter
+@Data
 public class CreateIngredientPrice {
 	private Double amount;
 	private LocalDate dateValue;

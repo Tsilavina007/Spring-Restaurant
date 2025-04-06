@@ -3,15 +3,15 @@ package hei.spring.todo.endpoint;
 import hei.spring.todo.endpoint.mapper.IngredientRestMapper;
 import hei.spring.todo.endpoint.rest.CreateIngredientPrice;
 import hei.spring.todo.endpoint.rest.CreateOrUpdateIngredient;
+import hei.spring.todo.endpoint.rest.CreateStockMovement;
 import hei.spring.todo.endpoint.rest.IngredientRest;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.IngredientPrice;
-import hei.spring.todo.model.Price;
+import hei.spring.todo.model.StockMovement;
 import hei.spring.todo.service.IngredientService;
 import hei.spring.todo.service.exception.ClientException;
 import hei.spring.todo.service.exception.NotFoundException;
 import hei.spring.todo.service.exception.ServerException;
-import jakarta.servlet.ServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +22,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/TD4")
 public class IngredientRestController {
 	private final IngredientService ingredientService;
 	private final IngredientRestMapper ingredientRestMapper;
@@ -82,6 +83,20 @@ public class IngredientRestController {
 			return ResponseEntity.ok().body(ingredientRest);
 		}
 		return ResponseEntity.status(200).body("No price to add into Ingredient with id : " + ingredientId);
+	}
+	@PutMapping("/ingredients/{ingredientId}/stockMovements")
+	public ResponseEntity<Object> SaveOrUpdateStockMovements(@PathVariable String ingredientId,
+			@RequestBody List<CreateStockMovement> stockMovements) {
+		List<StockMovement> stocks = stockMovements.stream()
+				.map(stockMovement -> new StockMovement(stockMovement.getId(), stockMovement.getType(),
+						stockMovement.getQuantity(), stockMovement.getUnit()))
+				.toList();
+		Ingredient ingredient = ingredientService.addStocks(ingredientId, stocks);
+		if (ingredient != null) {
+			IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
+			return ResponseEntity.ok().body(ingredientRest);
+		}
+		return ResponseEntity.status(200).body("No Stock to add into Ingredient with id : " + ingredientId);
 	}
 
 	@GetMapping("/ingredients/{id}")

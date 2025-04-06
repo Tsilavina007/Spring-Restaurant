@@ -3,6 +3,8 @@ package hei.spring.todo.dao.operations;
 import hei.spring.todo.dao.CustomDataSource;
 import hei.spring.todo.dao.mapper.StockMovementMapper;
 import hei.spring.todo.model.StockMovement;
+import hei.spring.todo.model.StockMovementType;
+import hei.spring.todo.model.Unit;
 import hei.spring.todo.service.exception.ServerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -43,8 +45,8 @@ public class StockMovementCrudOperations implements CrudOperations<StockMovement
 				try {
 					statement.setString(1, entityToSave.getId());
 					statement.setDouble(2, entityToSave.getQuantity());
-					statement.setString(3, entityToSave.getUnit().name());
-					statement.setString(4, entityToSave.getMovementType().name());
+					statement.setObject(3, (Unit) entityToSave.getUnit(), java.sql.Types.OTHER);
+					statement.setObject(4, (StockMovementType) entityToSave.getMovementType(), java.sql.Types.OTHER);
 					statement.setTimestamp(5, Timestamp.from(now()));
 					statement.setString(6, entityToSave.getIngredient().getId());
 					statement.addBatch(); // group by batch so executed as one query in database
