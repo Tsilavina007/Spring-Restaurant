@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/TD4")
+@RequestMapping("/TD5")
 public class IngredientRestController {
 	private final IngredientService ingredientService;
 	private final IngredientRestMapper ingredientRestMapper;

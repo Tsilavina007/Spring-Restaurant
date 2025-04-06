@@ -7,9 +7,9 @@ info:
     email: tsilavina.3@mail.hei.school
 
 servers:
-  - url: https://api.restaurant/TD4
+  - url: https://api.restaurant/TD5
     description: Production server
-  - url: http://localhost:8080/TD4
+  - url: http://localhost:8080/TD5
     description: Local development server
 
 paths:
@@ -134,6 +134,150 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /dishes:
+    get:
+      tags: [Dishes]
+      summary: List dishes with current ingredient prices, stock, and required quantities
+      responses:
+        '200':
+          description: List of dishes with ingredients and quantities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /dishes/{id}/ingredients:
+    put:
+      tags: [Dishes]
+      summary: Update dish ingredients with their quantities
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Dish identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DishIngredientUpdate'
+      responses:
+        '200':
+          description: Ingredients for the dish updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /orders/{reference}:
+    get:
+      tags: [Orders]
+      summary: Get order by reference with dish details
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Order reference
+      responses:
+        '200':
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetails'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /orders/{reference}/dishes:
+    put:
+      tags: [Orders]
+      summary: Modifier la liste des plats d'une commande (quantités + statut commande)
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Référence de la commande à modifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderDishesRequest'
+      responses:
+        '200':
+          description: Commande mise à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDetails'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/ServerError'
+
+  /orders/{reference}/dishes/{dishId}:
+    put:
+      tags: [Orders]
+      summary: Mise à jour du statut d’un plat spécifique dans une commande
+      description: Permet de modifier le statut d’un plat dans une commande donnée (IN_PROGRESS, FINISHED, DELIVERED)
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Référence de la commande
+        - name: dishId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID du plat dont on veut changer le statut (pas l’ID de l’instance dans la commande)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDishStatusRequest'
+      responses:
+        '200':
+          description: Statut du plat mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DishOrderStatus'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/ServerError'
 
@@ -273,6 +417,140 @@ components:
         totalPages:
           type: integer
           example: 1
+    Dish:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: "Spaghetti Saucisse"
+        availableQuantity:
+          type: number
+          format: double
+          example: 50.0
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/DishIngredient'
+      required: [id, name, availableQuantity, ingredients]
+
+    DishIngredient:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: "Saucisse"
+        actualPrice:
+          type: number
+          format: double
+          example: 20.0
+        availableQuantity:
+          type: number
+          format: double
+          example: 10000.0
+        requiredQuantity:
+          type: number
+          format: double
+          example: 200.0
+      required: [id, name, actualPrice, availableQuantity, requiredQuantity]
+
+    DishIngredientUpdate:
+      type: object
+      properties:
+        ingredientId:
+          type: string
+          example: "1"
+        requiredQuantity:
+          type: number
+          format: double
+          example: 250.0
+      required: [ingredientId, requiredQuantity]
+
+    OrderDetails:
+      type: object
+      properties:
+        reference:
+          type: string
+          example: "ORD123456"
+        status:
+          type: string
+          example: "Pending"
+        dishes:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDish'
+      required: [reference, status, dishes]
+
+    OrderDish:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Pizza Margherita"
+        currentPrice:
+          type: number
+          format: double
+          example: 12.5
+        quantity:
+          type: integer
+          example: 2
+        status:
+          type: string
+          example: "Ready"
+      required: [name, currentPrice, quantity, status]
+
+    UpdateOrderDishesRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [CREATED, CONFIRMED]
+          example: "CONFIRMED"
+        dishes:
+          type: array
+          description: Liste des plats avec quantité à commander
+          items:
+            $ref: '#/components/schemas/OrderDishInput'
+      required: [status, dishes]
+
+    OrderDishInput:
+      type: object
+      properties:
+        dishId:
+          type: integer
+          example: 3
+        quantity:
+          type: integer
+          example: 2
+      required: [dishId, quantity]
+
+    UpdateDishStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [IN_PROGRESS, FINISHED, DELIVERED]
+          example: "IN_PROGRESS"
+      required: [status]
+
+    DishOrderStatus:
+      type: object
+      properties:
+        dishId:
+          type: integer
+          example: 4
+        reference:
+          type: string
+          example: "ORD123"
+        status:
+          type: string
+          enum: [IN_PROGRESS, FINISHED, DELIVERED]
+          example: "IN_PROGRESS"
 
     ErrorResponse:
       type: object
@@ -293,6 +571,7 @@ components:
         path:
           type: string
           example: "/v1/ingredients"
+
 
   parameters:
     ingredientId:
