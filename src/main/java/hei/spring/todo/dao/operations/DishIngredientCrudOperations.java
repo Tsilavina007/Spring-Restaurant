@@ -1,14 +1,16 @@
 package hei.spring.todo.dao.operations;
 
 import hei.spring.todo.dao.CustomDataSource;
+import hei.spring.todo.model.DishIngredient;
 import hei.spring.todo.model.Ingredient;
+import hei.spring.todo.model.StockMovementType;
+import hei.spring.todo.model.Unit;
 import hei.spring.todo.model.price.IngredientPrice;
 import hei.spring.todo.dao.mapper.DishIngredientMapper;
 import hei.spring.todo.dao.mapper.IngredientMapper;
-import hei.spring.todo.service.exception.NotFoundException;
+import hei.spring.todo.endpoint.rest.CreateDishIngredient;
 import hei.spring.todo.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -20,9 +22,10 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class DishIngredientCrudOperations implements CrudOperations<Ingredient> {
+public class DishIngredientCrudOperations implements CrudOperations<DishIngredient> {
 	private final CustomDataSource customDataSource;
-	private final DishIngredientMapper ingredientMapper;
+	private final IngredientMapper ingredientMapper;
+	private final DishIngredientMapper dishIngredientMapper;
 
 	public List<Ingredient> findByIdDish(String id) {
 		String sql = "select i.id_ingredient, i.name, di.required_quantity, di.unit from ingredient i right join dish_ingredient di on i.id_ingredient = di.id_ingredient where di.id_dish = ?";
@@ -42,23 +45,90 @@ public class DishIngredientCrudOperations implements CrudOperations<Ingredient> 
 		}
 	}
 
+	public List<Ingredient> addByIdDish(String idDish, List<CreateDishIngredient> createDishIngredients) {
+		String sql = "select i.id_ingredient, i.name, di.required_quantity, di.unit from ingredient i right join dish_ingredient di on i.id_ingredient = di.id_ingredient where di.id_dish = ?";
+		List<Ingredient> ingredients = new ArrayList<>();
+		try (Connection connection = customDataSource.getConnection();
+		PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, idDish);
+			try (ResultSet resultSet = statement.executeQuery()) {
+				while (resultSet.next()) {
+					Ingredient ingredient = ingredientMapper.apply(resultSet);
+					ingredients.add(ingredient);
+				}
+				return ingredients;
+			}
+		} catch (SQLException e) {
+			throw new ServerException(e);
+		}
+	}
+
 	@Override
-	public List<Ingredient> getAll(int page, int size) {
+	public List<DishIngredient> getAll(int page, int size) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'getAll'");
 	}
 
 	@Override
-	public Ingredient findById(String id) {
+	public DishIngredient findById(String id) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'findById'");
 	}
 
 	@Override
-	public List<Ingredient> saveAll(List<Ingredient> entities) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
+	public List<DishIngredient> saveAll(List<DishIngredient> entities) {
+		String sql = "insert into dish_ingredient (id_dish, id_ingredient, required_quantity, unit) values (?, ?, ?, ?) returning id_dish, id_ingredient, required_quantity, unit";
+		List<DishIngredient> dishIngredients = new ArrayList<>();
+		try (Connection connection = customDataSource.getConnection();
+					PreparedStatement statement = connection.prepareStatement(sql)) {
+			entities.forEach(entityToSave -> {
+				try {
+					statement.setString(1, entityToSave.getIdDish());
+					statement.setString(2, entityToSave.getIdIngredient());
+					statement.setDouble(3, entityToSave.getRequiredQuantity());
+					statement.setObject(4, (Unit) entityToSave.getUnit(), java.sql.Types.OTHER);
+					statement.addBatch(); // group by batch so executed as one query in database
+				} catch (SQLException e) {
+					throw new ServerException(e);
+				}
+			});
+			try (ResultSet resultSet = statement.executeQuery()) {
+				while (resultSet.next()) {
+					dishIngredients.add(dishIngredientMapper.apply(resultSet));
+				}
+			}
+			return dishIngredients;
+		} catch (SQLException e1) {
+			throw new ServerException(e1);
+		}
 	}
+
+	// @Override
+	// public List<DishIngredient> saveAll(List<DishIngredient> entities) {
+	// 	List<DishIngredient> dishIngredients = new ArrayList<>();
+	// 	try (Connection connection = customDataSource.getConnection();
+	// 			PreparedStatement statement = connection.prepareStatement(
+	// 					"insert into dish_ingredient (id_dish, id_ingredient, required_quantity, unit) values (?, ?, ?, ?)"
+	// 							+ " returning id_dish, id_ingredient, required_quantity, unit");) {
+	// 		entities.forEach(entityToSave -> {
+	// 			try {
+	// 				statement.setString(1, entityToSave.getDish().getIdDish());
+	// 				statement.setString(2, entityToSave.getIngredient().getId());
+	// 				statement.setDouble(3, entityToSave.getIngredient().getRequiredQuantity());
+	// 				statement.setObject(4, (Unit) entityToSave.getIngredient().getUnit(), java.sql.Types.OTHER);
+	// 				statement.addBatch(); // group by batch so executed as one query in database
+	// 			} catch (SQLException e) {
+	// 				throw new ServerException(e);
+	// 			}
+	// 		});
+	// 		try (ResultSet resultSet = statement.executeQuery()) {
+	// 			while (resultSet.next()) {
+	// 				dishIngredients.add(dishIngredientMapper.apply(resultSet));
+	// 			}
+	// 		}
+	// 		return dishIngredients;
+	// 	}
+	// }
 
 	// @SneakyThrows
 	// @Override

@@ -1,6 +1,7 @@
 package hei.spring.todo.endpoint.mapper;
 
 import hei.spring.todo.dao.operations.IngredientCrudOperations;
+import hei.spring.todo.endpoint.rest.CreateDishIngredient;
 import hei.spring.todo.endpoint.rest.CreateOrUpdateIngredient;
 import hei.spring.todo.endpoint.rest.DishIngredientRest;
 import hei.spring.todo.endpoint.rest.PriceRest;
@@ -31,12 +32,12 @@ public class DishIngredientRestMapper {
 		return new DishIngredientRest(ingredient.getId(), ingredient.getName(), ingredient.getRequiredQuantity(), ingredient.getUnit() , prices, stockMovementRests);
 	}
 
-	public Ingredient toModel(CreateOrUpdateIngredient newIngredient) {
+	public Ingredient toModel(CreateDishIngredient newIngredient) {
 		Ingredient ingredient = new Ingredient();
-		ingredient.setId(newIngredient.getId());
-		ingredient.setName(newIngredient.getName());
+		ingredient.setId(newIngredient.getIngredientId());
+		ingredient.setRequiredQuantity(newIngredient.getRequiredQuantity());
 		try {
-			Ingredient existingIngredient = ingredientCrudOperations.findById(newIngredient.getId());
+			Ingredient existingIngredient = ingredientCrudOperations.findById(newIngredient.getIngredientId());
 			ingredient.addPrices(existingIngredient.getPrices());
 			ingredient.addStockMovements(existingIngredient.getStockMovements());
 		} catch (NotFoundException e) {

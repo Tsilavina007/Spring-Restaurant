@@ -1,12 +1,15 @@
 package hei.spring.todo.endpoint;
 
+import hei.spring.todo.endpoint.mapper.DishIngredientRestMapper;
 import hei.spring.todo.endpoint.mapper.DishRestMapper;
 import hei.spring.todo.endpoint.mapper.IngredientRestMapper;
+import hei.spring.todo.endpoint.rest.CreateDishIngredient;
 import hei.spring.todo.endpoint.rest.CreateIngredientPrice;
 import hei.spring.todo.endpoint.rest.CreateOrUpdateIngredient;
 import hei.spring.todo.endpoint.rest.CreateStockMovement;
 import hei.spring.todo.endpoint.rest.DishRest;
 import hei.spring.todo.endpoint.rest.IngredientRest;
+import hei.spring.todo.endpoint.rest.DishIngredientRest;
 import hei.spring.todo.model.Dish;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.price.IngredientPrice;
@@ -31,6 +34,7 @@ public class DishRestController {
 	private final IngredientService ingredientService;
 	private final DishService dishService;
 	private final IngredientRestMapper ingredientRestMapper;
+	private final DishIngredientRestMapper dishIngredientRestMapper;
 	private final DishRestMapper dishRestMapper;
 
 	@GetMapping("/dishes")
@@ -69,6 +73,20 @@ public class DishRestController {
 					.toList();
 			List<IngredientRest> ingredientsRest = ingredientService.saveAll(ingredients).stream()
 					.map(ingredient -> ingredientRestMapper.toRest(ingredient))
+					.toList();
+			return ResponseEntity.ok().body(ingredientsRest);
+		} catch (ServerException e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
+
+	@PutMapping("/dishes/{idDish}/ingredients")
+	public ResponseEntity<Object> addIngredients(
+			@PathVariable String idDish,
+			@RequestBody List<CreateDishIngredient> dishIngredientsToAdd) {
+		try {
+			List<DishIngredientRest> ingredientsRest = dishService.addIngredients(idDish ,dishIngredientsToAdd).stream()
+					.map(ingredient -> dishIngredientRestMapper.toRest(ingredient))
 					.toList();
 			return ResponseEntity.ok().body(ingredientsRest);
 		} catch (ServerException e) {

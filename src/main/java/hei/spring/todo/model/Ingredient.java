@@ -23,7 +23,7 @@ import static hei.spring.todo.model.StockMovementType.OUT;
 public class Ingredient {
 	private String id;
 	private String name;
-	private int requiredQuantity;
+	private Double requiredQuantity;
 	private Unit unit;
 	private List<IngredientPrice> prices;
 	private List<StockMovement> stockMovements;

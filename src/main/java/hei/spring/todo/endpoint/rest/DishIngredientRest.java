@@ -18,9 +18,9 @@ import static hei.spring.todo.model.StockMovementType.OUT;
 @AllArgsConstructor
 @Getter
 public class DishIngredientRest {
-	private String id;
+	private String idIngredient;
 	private String name;
-	private int requiredQuantity;
+	private Double requiredQuantity;
 	private Unit unit;
 	private List<PriceRest> prices;
 	private List<StockMovementRest> stockMovements;

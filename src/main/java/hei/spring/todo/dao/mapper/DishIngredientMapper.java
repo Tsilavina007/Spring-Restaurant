@@ -1,9 +1,13 @@
 package hei.spring.todo.dao.mapper;
 
+import hei.spring.todo.model.Dish;
+import hei.spring.todo.model.DishIngredient;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.price.IngredientPrice;
 import hei.spring.todo.model.StockMovement;
 import hei.spring.todo.model.Unit;
+import hei.spring.todo.dao.operations.DishCrudOperations;
+import hei.spring.todo.dao.operations.IngredientCrudOperations;
 import hei.spring.todo.dao.operations.IngredientPriceCrudOperations;
 import hei.spring.todo.dao.operations.StockMovementCrudOperations;
 import lombok.RequiredArgsConstructor;
@@ -16,24 +20,15 @@ import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
-public class DishIngredientMapper implements Function<ResultSet, Ingredient> {
-	private final IngredientPriceCrudOperations priceCrudOperations;
-	private final StockMovementCrudOperations stockMovementCrudOperations;
-
+public class DishIngredientMapper implements Function<ResultSet, DishIngredient> {
 	@SneakyThrows
 	@Override
-	public Ingredient apply(ResultSet resultSet) {
-		String idIngredient = resultSet.getString("id_ingredient");
-		List<IngredientPrice> ingredientPrices = priceCrudOperations.findByIdIngredient(idIngredient);
-		List<StockMovement> ingredientStockMovements = stockMovementCrudOperations.findByIdIngredient(idIngredient);
-
-		Ingredient ingredient = new Ingredient();
-		ingredient.setId(idIngredient);
-		ingredient.setName(resultSet.getString("name"));
-		ingredient.setRequiredQuantity(resultSet.getInt("required_quantity"));
-		ingredient.setUnit(Unit.valueOf(resultSet.getString("unit")));
-		ingredient.setPrices(ingredientPrices);
-		ingredient.setStockMovements(ingredientStockMovements);
-		return ingredient;
+	public DishIngredient apply(ResultSet resultSet) {
+		DishIngredient dishIngredient = new DishIngredient();
+		dishIngredient.setIdDish(resultSet.getString("id_dish"));
+		dishIngredient.setIdIngredient(resultSet.getString("id_ingredient"));
+		dishIngredient.setRequiredQuantity(resultSet.getDouble("required_quantity"));
+		dishIngredient.setUnit(Unit.valueOf(resultSet.getString("unit")));
+		return dishIngredient;
 	}
 }

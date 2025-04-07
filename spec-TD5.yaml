@@ -180,7 +180,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Dish'
+                $ref: '#/components/schemas/DishIngredientRest'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -481,7 +481,37 @@ components:
           type: number
           format: double
           example: 250.0
+        unit:
+          enum: [G, L, U]
+          example: U
       required: [ingredientId, requiredQuantity]
+
+    DishIngredientRest:
+      type: object
+      properties:
+        ingredientId:
+          type: string
+          example: "1"
+        name:
+          type: string
+          example: "Pain"
+        requiredQuantity:
+          type: number
+          format: double
+          example: 250.0
+        unit:
+          enum: [G, L, U]
+          example: U
+        actualPrice:
+          type: number
+          format: double
+          example: 20.0
+        availableQuantity:
+          type: number
+          format: double
+          example: 10000.0
+      required: [ingredientId, name, requiredQuantity, unit, actualPrice, availableQuantity]
+
 
     OrderDetails:
       type: object
