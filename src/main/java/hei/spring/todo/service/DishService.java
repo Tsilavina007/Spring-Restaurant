@@ -1,8 +1,10 @@
 package hei.spring.todo.service;
 
+import hei.spring.todo.dao.operations.DishCrudOperations;
 import hei.spring.todo.dao.operations.IngredientCrudOperations;
 import hei.spring.todo.dao.operations.IngredientPriceCrudOperations;
 import hei.spring.todo.dao.operations.StockMovementCrudOperations;
+import hei.spring.todo.model.Dish;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.price.IngredientPrice;
 import hei.spring.todo.model.StockMovement;
@@ -16,12 +18,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class IngredientService {
+public class DishService {
 	private final IngredientCrudOperations ingredientCrudOperations;
+	private final DishCrudOperations dishCrudOperations;
 	private final IngredientPriceCrudOperations ingredientPriceCrudOperations;
 	private final StockMovementCrudOperations stockMovementCrudOperations;
 
-	public List<Ingredient> getIngredientsByPrices(Integer page, Integer size, Double priceMinFilter, Double priceMaxFilter) {
+	public List<Dish> getDishesByPrices(Integer page, Integer size, Double priceMinFilter, Double priceMaxFilter) {
 		if (priceMinFilter != null && priceMinFilter < 0) {
 			throw new ClientException("PriceMinFilter " + priceMinFilter + " is negative");
 		}
@@ -40,17 +43,17 @@ public class IngredientService {
 		}
 
 		if (priceMinFilter == null && priceMaxFilter == null) {
-			return ingredientCrudOperations.getAll(page, size);
+			return dishCrudOperations.getAll(page, size);
 		}
 
-		List<Ingredient> ingredients = ingredientCrudOperations.getAll(1, 500);
+		List<Dish> dishes = dishCrudOperations.getAll(1, 500);
 
-		return ingredients.stream()
-				.filter(ingredient -> {
+		return dishes.stream()
+				.filter(dish -> {
 					if (priceMinFilter == null && priceMaxFilter == null) {
 						return true;
 					}
-					Double unitPrice = ingredient.getActualPrice();
+					Double unitPrice = dish.getUnitPrice();
 					if (priceMinFilter != null && priceMaxFilter == null) {
 						return unitPrice >= priceMinFilter;
 					}
@@ -62,12 +65,12 @@ public class IngredientService {
 				.toList();
 	}
 
-	public List<Ingredient> getAll(Integer page, Integer size) {
-		return ingredientCrudOperations.getAll(page, size);
+	public List<Dish> getAll(Integer page, Integer size) {
+		return dishCrudOperations.getAll(page, size);
 	}
 
-	public Ingredient getById(String id) {
-		return ingredientCrudOperations.findById(id);
+	public Dish getById(String id) {
+		return dishCrudOperations.findById(id);
 	}
 
 	public List<Ingredient> saveAll(List<Ingredient> ingredients) {

@@ -423,6 +423,14 @@ components:
         id:
           type: string
           example: "1"
+        actualPrice:
+          type: number
+          format: double
+          example: 1500.0
+        ingredientsCost:
+          type: number
+          format: double
+          example: 40000
         name:
           type: string
           example: "Spaghetti Saucisse"
@@ -449,6 +457,10 @@ components:
           type: number
           format: double
           example: 20.0
+        unit:
+          type: string
+          enum: [G, L, U]
+          example: G
         availableQuantity:
           type: number
           format: double

@@ -1,13 +1,17 @@
 package hei.spring.todo.endpoint;
 
+import hei.spring.todo.endpoint.mapper.DishRestMapper;
 import hei.spring.todo.endpoint.mapper.IngredientRestMapper;
 import hei.spring.todo.endpoint.rest.CreateIngredientPrice;
 import hei.spring.todo.endpoint.rest.CreateOrUpdateIngredient;
 import hei.spring.todo.endpoint.rest.CreateStockMovement;
+import hei.spring.todo.endpoint.rest.DishRest;
 import hei.spring.todo.endpoint.rest.IngredientRest;
+import hei.spring.todo.model.Dish;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.price.IngredientPrice;
 import hei.spring.todo.model.StockMovement;
+import hei.spring.todo.service.DishService;
 import hei.spring.todo.service.IngredientService;
 import hei.spring.todo.service.exception.ClientException;
 import hei.spring.todo.service.exception.NotFoundException;
@@ -23,23 +27,25 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/TD5")
-public class IngredientRestController {
+public class DishRestController {
 	private final IngredientService ingredientService;
+	private final DishService dishService;
 	private final IngredientRestMapper ingredientRestMapper;
+	private final DishRestMapper dishRestMapper;
 
-	@GetMapping("/ingredients")
-	public ResponseEntity<Object> getIngredients(
+	@GetMapping("/dishes")
+	public ResponseEntity<Object> getDishes(
 			@RequestParam(name = "page", required = false) Integer page,
 			@RequestParam(name = "size", required = false) Integer size,
 			@RequestParam(name = "priceMinFilter", required = false) Double priceMinFilter,
 			@RequestParam(name = "priceMaxFilter", required = false) Double priceMaxFilter) {
 		try {
-			List<Ingredient> ingredientsByPrices = ingredientService.getIngredientsByPrices(page, size, priceMinFilter,
+			List<Dish> dishesByPrices = dishService.getDishesByPrices(page, size, priceMinFilter,
 					priceMaxFilter);
-			List<IngredientRest> ingredientRests = ingredientsByPrices.stream()
-					.map(ingredient -> ingredientRestMapper.toRest(ingredient))
+			List<DishRest> dishRests = dishesByPrices.stream()
+					.map(dish -> dishRestMapper.toRest(dish))
 					.toList();
-			return ResponseEntity.ok().body(ingredientRests);
+			return ResponseEntity.ok().body(dishRests);
 		} catch (ClientException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		} catch (NotFoundException e) {
@@ -49,12 +55,12 @@ public class IngredientRestController {
 		}
 	}
 
-	@PostMapping("/ingredients")
+	@PostMapping("/dishes")
 	public ResponseEntity<Object> addIngredients() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	@PutMapping("/ingredients")
+	@PutMapping("/dishes")
 	public ResponseEntity<Object> updateIngredients(
 			@RequestBody List<CreateOrUpdateIngredient> ingredientsToCreateOrUpdate) {
 		try {
@@ -70,39 +76,11 @@ public class IngredientRestController {
 		}
 	}
 
-	@PutMapping("/ingredients/{ingredientId}/prices")
-	public ResponseEntity<Object> updateIngredientPrices(@PathVariable String ingredientId,
-			@RequestBody List<CreateIngredientPrice> ingredientPrices) {
-		List<IngredientPrice> prices = ingredientPrices.stream()
-				.map(ingredientPrice -> new IngredientPrice(ingredientPrice.getAmount(),
-						ingredientPrice.getDateValue()))
-				.toList();
-		Ingredient ingredient = ingredientService.addPrices(ingredientId, prices);
-		if (ingredient != null) {
-			IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
-			return ResponseEntity.ok().body(ingredientRest);
-		}
-		return ResponseEntity.status(200).body("No price to add into Ingredient with id : " + ingredientId);
-	}
-	@PutMapping("/ingredients/{ingredientId}/stockMovements")
-	public ResponseEntity<Object> SaveOrUpdateStockMovements(@PathVariable String ingredientId,
-			@RequestBody List<CreateStockMovement> stockMovements) {
-		List<StockMovement> stocks = stockMovements.stream()
-				.map(stockMovement -> new StockMovement(stockMovement.getId(), stockMovement.getType(),
-						stockMovement.getQuantity(), stockMovement.getUnit()))
-				.toList();
-		Ingredient ingredient = ingredientService.addStocks(ingredientId, stocks);
-		if (ingredient != null) {
-			IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
-			return ResponseEntity.ok().body(ingredientRest);
-		}
-		return ResponseEntity.status(200).body("No Stock to add into Ingredient with id : " + ingredientId);
-	}
 
-	@GetMapping("/ingredients/{id}")
-	public ResponseEntity<Object> getIngredient(@PathVariable String id) {
+	@GetMapping("/dishes/{id}")
+	public ResponseEntity<Object> getdish(@PathVariable String id) {
 		try {
-			return ResponseEntity.ok().body(ingredientRestMapper.toRest(ingredientService.getById(id)));
+			return ResponseEntity.ok().body(dishRestMapper.toRest(dishService.getById(id)));
 		} catch (ClientException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		} catch (NotFoundException e) {

@@ -1,6 +1,6 @@
 package hei.spring.todo.dao.mapper;
 
-import hei.spring.todo.model.IngredientPrice;
+import hei.spring.todo.model.price.IngredientPrice;
 
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;

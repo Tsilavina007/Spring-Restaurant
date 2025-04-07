@@ -2,6 +2,8 @@ package hei.spring.todo.dao.operations;
 
 import hei.spring.todo.dao.CustomDataSource;
 import hei.spring.todo.model.Ingredient;
+import hei.spring.todo.model.price.IngredientPrice;
+import hei.spring.todo.dao.mapper.DishIngredientMapper;
 import hei.spring.todo.dao.mapper.IngredientMapper;
 import hei.spring.todo.service.exception.NotFoundException;
 import hei.spring.todo.service.exception.ServerException;
@@ -20,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IngredientCrudOperations implements CrudOperations<Ingredient> {
 	private final CustomDataSource customDataSource;
-	private final IngredientMapper ingredientMapper;
+	private final DishIngredientMapper ingredientMapper;
 	private final IngredientPriceCrudOperations priceCrudOperations;
 	private final StockMovementCrudOperations stockMovementCrudOperations;
 
@@ -61,6 +63,23 @@ public class IngredientCrudOperations implements CrudOperations<Ingredient> {
 			throw new ServerException(e);
 		}
 	}
+	public List<Ingredient> findByIdDish(String id) {
+		String sql = "select i.id_ingredient, i.name, di.required_quantity, di.unit from ingredient i right join dish_ingredient di on i.id_ingredient = di.id_ingredient where di.id_dish = ?";
+		List<Ingredient> ingredients = new ArrayList<>();
+		try (Connection connection = customDataSource.getConnection();
+		PreparedStatement statement = connection.prepareStatement(sql)) {
+			statement.setString(1, id);
+			try (ResultSet resultSet = statement.executeQuery()) {
+				while (resultSet.next()) {
+					Ingredient ingredient = ingredientMapper.apply(resultSet);
+					ingredients.add(ingredient);
+				}
+				return ingredients;
+			}
+		} catch (SQLException e) {
+			throw new ServerException(e);
+		}
+	}
 
 	@SneakyThrows
 	@Override
@@ -71,7 +90,7 @@ public class IngredientCrudOperations implements CrudOperations<Ingredient> {
 					.prepareStatement("insert into ingredient (id_ingredient, name) values (?, ?)"
 							+ " on conflict (id_ingredient) do update set name=excluded.name"
 							+ " returning id_ingredient, name")) {
-				System.out.println(entities);
+				// System.out.println(entities);
 				entities.forEach(entityToSave -> {
 					try {
 						statement.setString(1, entityToSave.getId());
