@@ -3,7 +3,6 @@ package hei.spring.todo.dao.mapper;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.price.IngredientPrice;
 import hei.spring.todo.model.StockMovement;
-import hei.spring.todo.model.Unit;
 import hei.spring.todo.dao.operations.IngredientPriceCrudOperations;
 import hei.spring.todo.dao.operations.StockMovementCrudOperations;
 import lombok.RequiredArgsConstructor;

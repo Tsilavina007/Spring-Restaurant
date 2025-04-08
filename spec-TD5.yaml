@@ -522,15 +522,22 @@ components:
         status:
           type: string
           example: "Pending"
+        totalAmount:
+          type: number
+          format: double
+          example: "3000.0"
         dishes:
           type: array
           items:
             $ref: '#/components/schemas/OrderDish'
-      required: [reference, status, dishes]
+      required: [reference, status, totalAmount, dishes]
 
     OrderDish:
       type: object
       properties:
+        idDish:
+          type: string
+          example: "1"
         name:
           type: string
           example: "Pizza Margherita"
@@ -544,7 +551,7 @@ components:
         status:
           type: string
           example: "Ready"
-      required: [name, currentPrice, quantity, status]
+      required: [idDish, name, currentPrice, quantity, status]
 
     UpdateOrderDishesRequest:
       type: object

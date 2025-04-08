@@ -2,8 +2,6 @@ package hei.spring.todo.dao.operations;
 
 import hei.spring.todo.dao.CustomDataSource;
 import hei.spring.todo.model.Ingredient;
-import hei.spring.todo.model.price.IngredientPrice;
-import hei.spring.todo.dao.mapper.IngredientMapper;
 import hei.spring.todo.dao.mapper.IngredientMapper;
 import hei.spring.todo.service.exception.NotFoundException;
 import hei.spring.todo.service.exception.ServerException;

@@ -4,15 +4,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.springframework.stereotype.Repository;
 
 import hei.spring.todo.dao.CustomDataSource;
 import hei.spring.todo.dao.mapper.DishMapper;
 import hei.spring.todo.model.Dish;
-import hei.spring.todo.model.Ingredient;
-import hei.spring.todo.model.price.DishPrice;
 import hei.spring.todo.service.exception.NotFoundException;
 import hei.spring.todo.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;

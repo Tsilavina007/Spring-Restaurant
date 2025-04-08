@@ -1,38 +1,37 @@
 package hei.spring.todo.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class Order {
 	private String idOrder;
 	private Status status;
-	private LocalDateTime createdAt;
-	private LocalDateTime confirmedAt;
-	private LocalDateTime inPreparationAt;
-	private LocalDateTime completedAt;
-	private LocalDateTime deliveredAt;
-	private LocalDateTime canceledAt;
+	private Instant createdAt;
+	private Instant confirmedAt;
+	private Instant inPreparationAt;
+	private Instant completedAt;
+	private Instant deliveredAt;
+	private Instant canceledAt;
 	private List<DishOrder> listDish;
-
-	public Order(String idOrder, Status status, LocalDateTime createdAt, LocalDateTime confirmedAt,
-			LocalDateTime inPreparationAt, LocalDateTime completedAt, LocalDateTime deliveredAt, LocalDateTime canceledAt,
-			List<DishOrder> listDish) {
-		this.idOrder = idOrder;
-		this.status = status;
-		this.createdAt = createdAt;
-		this.confirmedAt = confirmedAt;
-		this.inPreparationAt = inPreparationAt;
-		this.completedAt = completedAt;
-		this.deliveredAt = deliveredAt;
-		this.canceledAt = canceledAt;
-		this.listDish = listDish;
-	}
 
 	public Order(String idOrder) {
 		this.idOrder = idOrder;
 		this.status = Status.CREATED;
-		this.createdAt = LocalDateTime.now();
+		this.createdAt = Instant.now();
 		this.listDish = new ArrayList<>();
 
 	}
@@ -40,11 +39,8 @@ public class Order {
 	public Order(String idOrder, List<DishOrder> listDish) {
 		this.idOrder = idOrder;
 		this.status = Status.CREATED;
-		this.createdAt = LocalDateTime.now();
+		this.createdAt = Instant.now();
 		this.listDish =  listDish;
-	}
-
-	public Order() {
 	}
 
 	public List<StatusDate> getListStatus() {
@@ -113,7 +109,7 @@ public class Order {
 				dishOrder.confirm();
 			}
 			this.status = Status.CONFIRMED;
-			this.confirmedAt = LocalDateTime.now();
+			this.confirmedAt = Instant.now();
 		}
 
 	}
@@ -121,7 +117,7 @@ public class Order {
 	public void inPreparation() {
 		if (this.status == Status.CONFIRMED) {
 			this.status = Status.IN_PREPARATION;
-			this.inPreparationAt = LocalDateTime.now();
+			this.inPreparationAt = Instant.now();
 		} else {
 			throw new RuntimeException("Order is not in CONFIRMED status");
 		}
@@ -130,7 +126,7 @@ public class Order {
 	public void complete() {
 		if (this.status == Status.IN_PREPARATION) {
 			this.status = Status.COMPLETED;
-			this.completedAt = LocalDateTime.now();
+			this.completedAt = Instant.now();
 		} else {
 			throw new RuntimeException("Order is not in IN_PREPARATION status");
 		}
@@ -139,7 +135,7 @@ public class Order {
 	public void deliver() {
 		if (this.status == Status.COMPLETED) {
 			this.status = Status.DELIVERED;
-			this.deliveredAt = LocalDateTime.now();
+			this.deliveredAt = Instant.now();
 		} else {
 			throw new RuntimeException("Order is not in COMPLETED status");
 		}
@@ -147,159 +143,6 @@ public class Order {
 
 	public void cancel() {
 		this.status = Status.CANCELED;
-		this.canceledAt = LocalDateTime.now();
+		this.canceledAt = Instant.now();
 	}
-
-	public String getIdOrder() {
-		return idOrder;
-	}
-
-	public void setIdOrder(String idOrder) {
-		this.idOrder = idOrder;
-	}
-
-	public Status getStatus() {
-		return status;
-	}
-
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public LocalDateTime getConfirmedAt() {
-		return confirmedAt;
-	}
-
-	public void setConfirmedAt(LocalDateTime confirmedAt) {
-		this.confirmedAt = confirmedAt;
-	}
-
-	public LocalDateTime getInPreparationAt() {
-		return inPreparationAt;
-	}
-
-	public void setInPreparationAt(LocalDateTime inPreparationAt) {
-		this.inPreparationAt = inPreparationAt;
-	}
-
-	public LocalDateTime getCompletedAt() {
-		return completedAt;
-	}
-
-	public void setCompletedAt(LocalDateTime completedAt) {
-		this.completedAt = completedAt;
-	}
-
-	public LocalDateTime getDeliveredAt() {
-		return deliveredAt;
-	}
-
-	public void setDeliveredAt(LocalDateTime deliveredAt) {
-		this.deliveredAt = deliveredAt;
-	}
-
-	public LocalDateTime getCanceledAt() {
-		return canceledAt;
-	}
-
-	public void setCanceledAt(LocalDateTime canceledAt) {
-		this.canceledAt = canceledAt;
-	}
-
-	public List<DishOrder> getListDish() {
-		return listDish;
-	}
-
-	public void setListDish(List<DishOrder> listDish) {
-		this.listDish = listDish;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((idOrder == null) ? 0 : idOrder.hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
-		result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
-		result = prime * result + ((confirmedAt == null) ? 0 : confirmedAt.hashCode());
-		result = prime * result + ((inPreparationAt == null) ? 0 : inPreparationAt.hashCode());
-		result = prime * result + ((completedAt == null) ? 0 : completedAt.hashCode());
-		result = prime * result + ((deliveredAt == null) ? 0 : deliveredAt.hashCode());
-		result = prime * result + ((canceledAt == null) ? 0 : canceledAt.hashCode());
-		result = prime * result + ((listDish == null) ? 0 : listDish.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Order other = (Order) obj;
-		if (idOrder == null) {
-			if (other.idOrder != null)
-				return false;
-		} else if (!idOrder.equals(other.idOrder))
-			return false;
-		if (status == null) {
-			if (other.status != null)
-				return false;
-		} else if (!status.equals(other.status))
-			return false;
-		if (createdAt == null) {
-			if (other.createdAt != null)
-				return false;
-		} else if (!createdAt.equals(other.createdAt))
-			return false;
-		if (confirmedAt == null) {
-			if (other.confirmedAt != null)
-				return false;
-		} else if (!confirmedAt.equals(other.confirmedAt))
-			return false;
-		if (inPreparationAt == null) {
-			if (other.inPreparationAt != null)
-				return false;
-		} else if (!inPreparationAt.equals(other.inPreparationAt))
-			return false;
-		if (completedAt == null) {
-			if (other.completedAt != null)
-				return false;
-		} else if (!completedAt.equals(other.completedAt))
-			return false;
-		if (deliveredAt == null) {
-			if (other.deliveredAt != null)
-				return false;
-		} else if (!deliveredAt.equals(other.deliveredAt))
-			return false;
-		if (canceledAt == null) {
-			if (other.canceledAt != null)
-				return false;
-		} else if (!canceledAt.equals(other.canceledAt))
-			return false;
-		if (listDish == null) {
-			if (other.listDish != null)
-				return false;
-		} else if (!listDish.equals(other.listDish))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Order [idOrder=" + idOrder + ", status=" + status + ", createdAt=" + createdAt + ", confirmedAt="
-				+ confirmedAt + ", inPreparationAt=" + inPreparationAt + ", completedAt=" + completedAt
-				+ ", deliveredAt=" + deliveredAt + ", canceledAt=" + canceledAt + ", listDish=" + listDish + "]";
-	}
-
 }

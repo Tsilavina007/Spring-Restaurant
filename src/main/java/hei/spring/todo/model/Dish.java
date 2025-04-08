@@ -1,7 +1,6 @@
 package hei.spring.todo.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import hei.spring.todo.model.price.DishPrice;
@@ -34,6 +33,12 @@ public class Dish {
 				.orElse(unitPrice);
 	}
 
+	public Double getUnitPrice() {
+		return dishPrices.stream()
+		.max((price1, price2) -> price1.getUpdateDatetime().compareTo(price2.getUpdateDatetime()))
+		.map(DishPrice::getUnitPrice)
+		.orElse(unitPrice);
+	}
 	public int getAvailableQuantity() {
 		double total = this.ingredients.get(0).getAvailableQuantity();
 		for (Ingredient ingredient : this.ingredients) {

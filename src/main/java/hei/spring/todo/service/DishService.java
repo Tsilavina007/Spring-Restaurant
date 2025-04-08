@@ -9,14 +9,12 @@ import hei.spring.todo.endpoint.rest.CreateDishIngredient;
 import hei.spring.todo.model.Dish;
 import hei.spring.todo.model.DishIngredient;
 import hei.spring.todo.model.Ingredient;
-import hei.spring.todo.model.price.IngredientPrice;
 import hei.spring.todo.model.StockMovement;
 import hei.spring.todo.service.exception.ClientException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +24,6 @@ public class DishService {
 	private final IngredientCrudOperations ingredientCrudOperations;
 	private final DishCrudOperations dishCrudOperations;
 	private final DishIngredientCrudOperations dishIngredientCrudOperations;
-	private final IngredientPriceCrudOperations ingredientPriceCrudOperations;
 	private final StockMovementCrudOperations stockMovementCrudOperations;
 
 	public List<Dish> getDishesByPrices(Integer page, Integer size, Double priceMinFilter, Double priceMaxFilter) {
