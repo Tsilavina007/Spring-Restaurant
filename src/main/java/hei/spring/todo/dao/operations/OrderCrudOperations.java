@@ -20,23 +20,6 @@ public class OrderCrudOperations implements CrudOperations<Order> {
 	@Autowired
 	private DishOrderCrudOperations dishOrderCrudOperations;
 
-	// public List<DishOrder> getAllDishOrder(String idOrder) {
-	// 	List<DishOrder> dishes = new ArrayList<>();
-	// 	String query = "SELECT id_dish, status, quantity, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM dish_order WHERE id_order = ?";
-	// 	try (Connection connection = customDataSource.getConnection();
-	// 			PreparedStatement statement = connection.prepareStatement(query)) {
-	// 		statement.setString(1, idOrder);
-	// 		ResultSet resultSet = statement.executeQuery();
-	// 		while (resultSet.next()) {
-	// 			DishOrder dish = dishOrderMapper.apply(resultSet);
-	// 			dishes.add(dish);
-	// 		}
-	// 	} catch (SQLException e) {
-	// 		e.printStackTrace();
-	// 	}
-	// 	return dishes;
-	// }
-
 	@Override
 	public List<Order> getAll(int page, int size) {
 		List<Order> orders = new ArrayList<>();
@@ -80,17 +63,17 @@ public class OrderCrudOperations implements CrudOperations<Order> {
 		PreparedStatement statement = connection.prepareStatement(query)) {
 				statement.setString(1, entity.getIdOrder());
 				statement.setObject(2, entity.getStatus(), java.sql.Types.OTHER);
-				statement.setTimestamp(3, Timestamp.valueOf(entity.getCreatedAt().toString()));
+				statement.setTimestamp(3, Timestamp.from(entity.getCreatedAt()));
 				statement.setTimestamp(4,
-						entity.getConfirmedAt() != null ? Timestamp.valueOf(entity.getConfirmedAt().toString()) : null);
+						entity.getConfirmedAt() != null ? Timestamp.from(entity.getConfirmedAt()) : null);
 				statement.setTimestamp(5,
-						entity.getInPreparationAt() != null ? Timestamp.valueOf(entity.getInPreparationAt().toString()) : null);
+						entity.getInPreparationAt() != null ? Timestamp.from(entity.getInPreparationAt()) : null);
 				statement.setTimestamp(6,
-						entity.getCompletedAt() != null ? Timestamp.valueOf(entity.getCompletedAt().toString()) : null);
+						entity.getCompletedAt() != null ? Timestamp.from(entity.getCompletedAt()) : null);
 				statement.setTimestamp(7,
-						entity.getDeliveredAt() != null ? Timestamp.valueOf(entity.getDeliveredAt().toString()) : null);
+						entity.getDeliveredAt() != null ? Timestamp.from(entity.getDeliveredAt()) : null);
 				statement.setTimestamp(8,
-						entity.getCanceledAt() != null ? Timestamp.valueOf(entity.getCanceledAt().toString()) : null);
+						entity.getCanceledAt() != null ? Timestamp.from(entity.getCanceledAt()) : null);
 				statement.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -100,17 +83,17 @@ public class OrderCrudOperations implements CrudOperations<Order> {
 			try (Connection connection = customDataSource.getConnection();
 		PreparedStatement statement = connection.prepareStatement(query)) {
 				statement.setObject(1, entity.getStatus(), java.sql.Types.OTHER);
-				statement.setTimestamp(2, Timestamp.valueOf(entity.getCreatedAt().toString()));
+				statement.setTimestamp(2, Timestamp.from(entity.getCreatedAt()));
 				statement.setTimestamp(3,
-						entity.getConfirmedAt() != null ? Timestamp.valueOf(entity.getConfirmedAt().toString()) : null);
+						entity.getConfirmedAt() != null ? Timestamp.from(entity.getConfirmedAt()) : null);
 				statement.setTimestamp(4,
-						entity.getInPreparationAt() != null ? Timestamp.valueOf(entity.getInPreparationAt().toString()) : null);
+						entity.getInPreparationAt() != null ? Timestamp.from(entity.getInPreparationAt()) : null);
 				statement.setTimestamp(5,
-						entity.getCompletedAt() != null ? Timestamp.valueOf(entity.getCompletedAt().toString()) : null);
+						entity.getCompletedAt() != null ? Timestamp.from(entity.getCompletedAt()) : null);
 				statement.setTimestamp(6,
-						entity.getDeliveredAt() != null ? Timestamp.valueOf(entity.getDeliveredAt().toString()) : null);
+						entity.getDeliveredAt() != null ? Timestamp.from(entity.getDeliveredAt()) : null);
 				statement.setTimestamp(7,
-						entity.getCanceledAt() != null ? Timestamp.valueOf(entity.getCanceledAt().toString()) : null);
+						entity.getCanceledAt() != null ? Timestamp.from(entity.getCanceledAt()) : null);
 				statement.setString(8, entity.getIdOrder());
 				statement.executeUpdate();
 			} catch (SQLException e) {
@@ -131,4 +114,6 @@ public class OrderCrudOperations implements CrudOperations<Order> {
 		}
 		return savedOrders;
 	}
+
+
 }

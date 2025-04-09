@@ -3,7 +3,6 @@ package hei.spring.todo.service;
 import hei.spring.todo.dao.operations.DishCrudOperations;
 import hei.spring.todo.dao.operations.DishIngredientCrudOperations;
 import hei.spring.todo.dao.operations.IngredientCrudOperations;
-import hei.spring.todo.dao.operations.IngredientPriceCrudOperations;
 import hei.spring.todo.dao.operations.StockMovementCrudOperations;
 import hei.spring.todo.endpoint.rest.CreateDishIngredient;
 import hei.spring.todo.model.Dish;

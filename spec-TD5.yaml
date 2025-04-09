@@ -570,7 +570,7 @@ components:
     OrderDishInput:
       type: object
       properties:
-        dishId:
+        idDish:
           type: integer
           example: 3
         quantity:

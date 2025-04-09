@@ -1,7 +1,6 @@
 package hei.spring.todo.endpoint.mapper;
 
 import hei.spring.todo.dao.operations.DishOrderCrudOperations;
-import hei.spring.todo.dao.operations.IngredientCrudOperations;
 import hei.spring.todo.endpoint.rest.DishOrderRest;
 import hei.spring.todo.endpoint.rest.OrderRest;
 import hei.spring.todo.model.DishOrder;
