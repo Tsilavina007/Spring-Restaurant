@@ -11,6 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import hei.spring.todo.model.price.IngredientPrice;
+
 import static hei.spring.todo.model.StockMovementType.IN;
 import static hei.spring.todo.model.StockMovementType.OUT;
 
@@ -21,6 +23,8 @@ import static hei.spring.todo.model.StockMovementType.OUT;
 public class Ingredient {
 	private String id;
 	private String name;
+	private Double requiredQuantity;
+	private Unit unit;
 	private List<IngredientPrice> prices;
 	private List<StockMovement> stockMovements;
 

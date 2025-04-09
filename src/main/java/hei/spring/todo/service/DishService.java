@@ -1,27 +1,31 @@
 package hei.spring.todo.service;
 
+import hei.spring.todo.dao.operations.DishCrudOperations;
+import hei.spring.todo.dao.operations.DishIngredientCrudOperations;
 import hei.spring.todo.dao.operations.IngredientCrudOperations;
-import hei.spring.todo.dao.operations.IngredientPriceCrudOperations;
 import hei.spring.todo.dao.operations.StockMovementCrudOperations;
+import hei.spring.todo.endpoint.rest.CreateDishIngredient;
+import hei.spring.todo.model.Dish;
+import hei.spring.todo.model.DishIngredient;
 import hei.spring.todo.model.Ingredient;
-import hei.spring.todo.model.price.IngredientPrice;
 import hei.spring.todo.model.StockMovement;
 import hei.spring.todo.service.exception.ClientException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class IngredientService {
+public class DishService {
 	private final IngredientCrudOperations ingredientCrudOperations;
-	private final IngredientPriceCrudOperations ingredientPriceCrudOperations;
+	private final DishCrudOperations dishCrudOperations;
+	private final DishIngredientCrudOperations dishIngredientCrudOperations;
 	private final StockMovementCrudOperations stockMovementCrudOperations;
 
-	public List<Ingredient> getIngredientsByPrices(Integer page, Integer size, Double priceMinFilter, Double priceMaxFilter) {
+	public List<Dish> getDishesByPrices(Integer page, Integer size, Double priceMinFilter, Double priceMaxFilter) {
 		if (priceMinFilter != null && priceMinFilter < 0) {
 			throw new ClientException("PriceMinFilter " + priceMinFilter + " is negative");
 		}
@@ -40,17 +44,17 @@ public class IngredientService {
 		}
 
 		if (priceMinFilter == null && priceMaxFilter == null) {
-			return ingredientCrudOperations.getAll(page, size);
+			return dishCrudOperations.getAll(page, size);
 		}
 
-		List<Ingredient> ingredients = ingredientCrudOperations.getAll(1, 500);
+		List<Dish> dishes = dishCrudOperations.getAll(1, 500);
 
-		return ingredients.stream()
-				.filter(ingredient -> {
+		return dishes.stream()
+				.filter(dish -> {
 					if (priceMinFilter == null && priceMaxFilter == null) {
 						return true;
 					}
-					Double unitPrice = ingredient.getActualPrice();
+					Double unitPrice = dish.getUnitPrice();
 					if (priceMinFilter != null && priceMaxFilter == null) {
 						return unitPrice >= priceMinFilter;
 					}
@@ -62,34 +66,35 @@ public class IngredientService {
 				.toList();
 	}
 
-	public List<Ingredient> getAll(Integer page, Integer size) {
-		return ingredientCrudOperations.getAll(page, size);
+	public List<Dish> getAll(Integer page, Integer size) {
+		return dishCrudOperations.getAll(page, size);
 	}
 
-	public Ingredient getById(String id) {
-		return ingredientCrudOperations.findById(id);
+	public Dish getById(String id) {
+		return dishCrudOperations.findById(id);
 	}
 
 	public List<Ingredient> saveAll(List<Ingredient> ingredients) {
 		return ingredientCrudOperations.saveAll(ingredients);
 	}
 
-	public Ingredient addPrices(String ingredientId, List<IngredientPrice> pricesToAdd) {
-		if (pricesToAdd.size() < 1 || pricesToAdd.size() == 1 && pricesToAdd.get(0).equals(new IngredientPrice())) {
+	public List<Ingredient> addIngredients(String idDish, List<CreateDishIngredient> ingredientToAdd) {
+		if (ingredientToAdd.size() < 1 || ingredientToAdd.size() == 1 && ingredientToAdd.get(0).equals(new Ingredient())) {
 			return null;
 		}
-		Ingredient ingredient = ingredientCrudOperations.findById(ingredientId);
-		pricesToAdd.forEach(price -> {
-			if (price.getDateValue() == null) {
-				price.setDateValue(LocalDate.now());
-			}
-		});
-		pricesToAdd.forEach(price -> price.setIngredient(ingredient));
-		List<IngredientPrice> ingredientPriceSaved = ingredientPriceCrudOperations.saveAll(pricesToAdd);
-		// System.out.println(ingredientPriceSaved);
-		if (ingredientPriceSaved.size() > 0) {
-			ingredient.addPrices(ingredientPriceSaved);
-			return ingredient;
+		List<DishIngredient> dishIngredientsToAdd = new ArrayList<>();
+		List<Ingredient> ingredients = new ArrayList<>();
+		ingredientToAdd.forEach(ingredient -> dishIngredientsToAdd.add(new DishIngredient(idDish, ingredient.getIngredientId(), ingredient.getRequiredQuantity(), ingredient.getUnit())));
+		List<DishIngredient> dishIngredientsSaved = dishIngredientCrudOperations.saveAll(dishIngredientsToAdd);
+		System.out.println(dishIngredientsSaved);
+		if (dishIngredientsSaved.size() > 0) {
+			dishIngredientsSaved.forEach(ingredient -> {
+				Ingredient newIngredient = ingredientCrudOperations.findById(ingredient.getIdIngredient());
+				newIngredient.setRequiredQuantity(ingredient.getRequiredQuantity());
+				newIngredient.setUnit(ingredient.getUnit());
+				ingredients.add(newIngredient);
+			});
+			return ingredients;
 		}
 		return null;
 	}

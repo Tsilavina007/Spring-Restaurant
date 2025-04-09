@@ -10,17 +10,30 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import hei.spring.todo.model.Unit;
+
 import static hei.spring.todo.model.StockMovementType.IN;
 import static hei.spring.todo.model.StockMovementType.OUT;
 
 @AllArgsConstructor
 @Getter
-public class IngredientRest {
-	private String id;
+public class DishIngredientRest {
+	private String idIngredient;
 	private String name;
+	private Double requiredQuantity;
+	private Unit unit;
 	private List<PriceRest> prices;
 	private List<StockMovementRest> stockMovements;
 
+	@JsonIgnore
+	public List<PriceRest> getPrices() {
+		return this.prices;
+	}
+
+	@JsonIgnore
+	public void getStockMovements() {
+		return ;
+	}
 	public Double getActualPrice() {
 		return findActualPrice().orElse(new PriceRest(0.0)).getPrice();
 	}

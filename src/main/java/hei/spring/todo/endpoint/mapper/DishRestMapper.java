@@ -2,9 +2,10 @@ package hei.spring.todo.endpoint.mapper;
 
 import hei.spring.todo.dao.operations.IngredientCrudOperations;
 import hei.spring.todo.endpoint.rest.CreateOrUpdateIngredient;
-import hei.spring.todo.endpoint.rest.IngredientRest;
+import hei.spring.todo.endpoint.rest.DishIngredientRest;
+import hei.spring.todo.endpoint.rest.DishRest;
 import hei.spring.todo.endpoint.rest.PriceRest;
-import hei.spring.todo.endpoint.rest.StockMovementRest;
+import hei.spring.todo.model.Dish;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.service.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,21 +15,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class IngredientRestMapper {
+public class DishRestMapper {
 	@Autowired
-	private IngredientPriceRestMapper priceRestMapper;
+	private DishPriceRestMapper priceRestMapper;
 	@Autowired
-	private StockMovementRestMapper stockMovementRestMapper;
+	private DishIngredientRestMapper ingredientRestMapper;
 	@Autowired
 	private IngredientCrudOperations ingredientCrudOperations;
 
-	public IngredientRest toRest(Ingredient ingredient) {
-		List<PriceRest> prices = ingredient.getPrices().stream()
+	public DishRest toRest(Dish dish) {
+		List<PriceRest> prices = dish.getDishPrices().stream()
 				.map(price -> priceRestMapper.apply(price)).toList();
-		List<StockMovementRest> stockMovementRests = ingredient.getStockMovements().stream()
-				.map(stockMovement -> stockMovementRestMapper.apply(stockMovement))
-				.toList();
-		return new IngredientRest(ingredient.getId(), ingredient.getName(), prices, stockMovementRests);
+		// System.out.println(dish);
+		List<DishIngredientRest> ingredients = dish.getIngredients().stream()
+				.map(ingredient -> ingredientRestMapper.toRest(ingredient)).toList();
+		return new DishRest(dish.getIdDish(), dish.getName(), ingredients, prices);
 	}
 
 	public Ingredient toModel(CreateOrUpdateIngredient newIngredient) {

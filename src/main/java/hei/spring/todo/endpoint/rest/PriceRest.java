@@ -11,7 +11,6 @@ public class PriceRest {
 	public PriceRest(double d) {
 		//TODO Auto-generated constructor stub
 	}
-	private String id;
 	private Double price;
 	private LocalDate dateValue;
 }

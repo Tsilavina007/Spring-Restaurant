@@ -1,7 +1,7 @@
 package hei.spring.todo.dao.mapper;
 
 import hei.spring.todo.model.Ingredient;
-import hei.spring.todo.model.IngredientPrice;
+import hei.spring.todo.model.price.IngredientPrice;
 import hei.spring.todo.model.StockMovement;
 import hei.spring.todo.dao.operations.IngredientPriceCrudOperations;
 import hei.spring.todo.dao.operations.StockMovementCrudOperations;
@@ -28,6 +28,8 @@ public class IngredientMapper implements Function<ResultSet, Ingredient> {
 
 		Ingredient ingredient = new Ingredient();
 		ingredient.setId(idIngredient);
+		// ingredient.setRequiredQuantity(resultSet.getDouble("required_quantity"));
+		// ingredient.setUnit(Unit.valueOf(resultSet.getString("unit")));
 		ingredient.setName(resultSet.getString("name"));
 		ingredient.setPrices(ingredientPrices);
 		ingredient.setStockMovements(ingredientStockMovements);

@@ -1,6 +1,6 @@
-package hei.spring.todo.model;
+package hei.spring.todo.model.price;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import hei.spring.todo.model.Ingredient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
