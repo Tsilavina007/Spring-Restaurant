@@ -1,7 +1,9 @@
 package hei.spring.todo.service;
 
+import hei.spring.todo.dao.operations.DishOrderCrudOperations;
 import hei.spring.todo.dao.operations.OrderCrudOperations;
 import hei.spring.todo.endpoint.mapper.OrderDishInputRestMapper;
+import hei.spring.todo.endpoint.rest.DishOrderToUpdate;
 import hei.spring.todo.endpoint.rest.OrderToUpdate;
 import hei.spring.todo.model.DishOrder;
 import hei.spring.todo.model.Order;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
 	private final OrderCrudOperations orderCrudOperations;
+	private final DishOrderCrudOperations dishOrderCrudOperations;
 	private final OrderDishInputRestMapper orderDishInputRestMapper;
 
 	public List<Order> getAll(Integer page, Integer size) {
@@ -30,6 +33,11 @@ public class OrderService {
 		Order order = orderCrudOperations.findById(id);
 		order.setListDish(dishOrder);
 		return orderCrudOperations.save(order);
+	}
+
+	public DishOrder updateDishOrder(String idOrder, String idDish, DishOrderToUpdate dishOrderToUpdate) {
+		DishOrder dishOrder = orderDishInputRestMapper.updateToModel(idOrder, idDish, dishOrderToUpdate.getStatus());
+		return dishOrderCrudOperations.save(dishOrder);
 	}
 
 	// public List<Ingredient> saveAll(List<Ingredient> ingredients) {
