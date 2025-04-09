@@ -31,7 +31,6 @@ public class StockMovementCrudOperations implements CrudOperations<StockMovement
 	public StockMovement findById(String id) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
-
 	@Override
 	public List<StockMovement> saveAll(List<StockMovement> entities) {
 		List<StockMovement> stockMovements = new ArrayList<>();
@@ -41,22 +40,17 @@ public class StockMovementCrudOperations implements CrudOperations<StockMovement
 				on conflict (id_mvm) do nothing returning id_mvm, quantity_mvm, unit, type_mvm, update_datetime, id_ingredient""";
 		try (Connection connection = customDataSource.getConnection();
 				PreparedStatement statement = connection.prepareStatement(sql)) {
-			entities.forEach(entityToSave -> {
-				try {
-					statement.setString(1, entityToSave.getId());
-					statement.setDouble(2, entityToSave.getQuantity());
-					statement.setObject(3, (Unit) entityToSave.getUnit(), java.sql.Types.OTHER);
-					statement.setObject(4, (StockMovementType) entityToSave.getMovementType(), java.sql.Types.OTHER);
-					statement.setTimestamp(5, Timestamp.from(now()));
-					statement.setString(6, entityToSave.getIngredient().getId());
-					statement.addBatch(); // group by batch so executed as one query in database
-				} catch (SQLException e) {
-					throw new ServerException(e);
-				}
-			});
-			try (ResultSet resultSet = statement.executeQuery()) {
-				while (resultSet.next()) {
-					stockMovements.add(stockMovementMapper.apply(resultSet));
+			for (StockMovement stockMovement : entities) {
+				statement.setString(1, stockMovement.getId());
+				statement.setDouble(2, stockMovement.getQuantity());
+				statement.setObject(3, (Unit) stockMovement.getUnit(), java.sql.Types.OTHER);
+				statement.setObject(4, (StockMovementType) stockMovement.getMovementType(), java.sql.Types.OTHER);
+				statement.setTimestamp(5, Timestamp.from(now()));
+				statement.setString(6, stockMovement.getIngredient().getId());
+				try (ResultSet resultSet = statement.executeQuery()) {
+					while (resultSet.next()) {
+						stockMovements.add(stockMovementMapper.apply(resultSet));
+					}
 				}
 			}
 			return stockMovements;

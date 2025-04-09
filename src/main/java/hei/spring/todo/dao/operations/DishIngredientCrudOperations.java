@@ -5,7 +5,7 @@ import hei.spring.todo.model.DishIngredient;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.Unit;
 import hei.spring.todo.dao.mapper.DishIngredientMapper;
-import hei.spring.todo.dao.mapper.IngredientMapper;
+import hei.spring.todo.dao.mapper.IngredientDishMapper;
 import hei.spring.todo.endpoint.rest.CreateDishIngredient;
 import hei.spring.todo.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DishIngredientCrudOperations implements CrudOperations<DishIngredient> {
 	private final CustomDataSource customDataSource;
-	private final IngredientMapper ingredientMapper;
+	private final IngredientDishMapper ingredientMapper;
 	private final DishIngredientMapper dishIngredientMapper;
 
 	public List<Ingredient> findByIdDish(String id) {

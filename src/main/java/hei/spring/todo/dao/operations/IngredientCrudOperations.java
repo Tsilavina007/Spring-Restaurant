@@ -2,11 +2,13 @@ package hei.spring.todo.dao.operations;
 
 import hei.spring.todo.dao.CustomDataSource;
 import hei.spring.todo.model.Ingredient;
+import hei.spring.todo.dao.mapper.IngredientDishMapper;
 import hei.spring.todo.dao.mapper.IngredientMapper;
 import hei.spring.todo.service.exception.NotFoundException;
 import hei.spring.todo.service.exception.ServerException;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -17,12 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
 public class IngredientCrudOperations implements CrudOperations<Ingredient> {
-	private final CustomDataSource customDataSource;
-	private final IngredientMapper ingredientMapper;
-	private final IngredientPriceCrudOperations priceCrudOperations;
-	private final StockMovementCrudOperations stockMovementCrudOperations;
+	@Autowired
+	private CustomDataSource customDataSource;
+	@Autowired
+	private IngredientMapper ingredientMapper;
+	@Autowired
+	private IngredientDishMapper ingredientDishMapper;
+	@Autowired
+	private IngredientPriceCrudOperations priceCrudOperations;
+	@Autowired
+	private StockMovementCrudOperations stockMovementCrudOperations;
 
 	// TODO : default values for page and size
 	@Override
@@ -69,7 +76,7 @@ public class IngredientCrudOperations implements CrudOperations<Ingredient> {
 			statement.setString(1, id);
 			try (ResultSet resultSet = statement.executeQuery()) {
 				while (resultSet.next()) {
-					Ingredient ingredient = ingredientMapper.apply(resultSet);
+					Ingredient ingredient = ingredientDishMapper.apply(resultSet);
 					ingredients.add(ingredient);
 				}
 				return ingredients;

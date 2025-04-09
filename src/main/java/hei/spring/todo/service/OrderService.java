@@ -2,14 +2,21 @@ package hei.spring.todo.service;
 
 import hei.spring.todo.dao.operations.DishOrderCrudOperations;
 import hei.spring.todo.dao.operations.OrderCrudOperations;
+import hei.spring.todo.dao.operations.StockMovementCrudOperations;
 import hei.spring.todo.endpoint.mapper.OrderDishInputRestMapper;
 import hei.spring.todo.endpoint.rest.DishOrderToUpdate;
 import hei.spring.todo.endpoint.rest.OrderToUpdate;
 import hei.spring.todo.model.DishOrder;
 import hei.spring.todo.model.Order;
+import hei.spring.todo.model.Status;
+import hei.spring.todo.model.StockMovement;
+import hei.spring.todo.model.StockMovementType;
+import hei.spring.todo.service.exception.ClientException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +24,7 @@ import java.util.List;
 public class OrderService {
 	private final OrderCrudOperations orderCrudOperations;
 	private final DishOrderCrudOperations dishOrderCrudOperations;
+	private final StockMovementCrudOperations stockMovementCrudOperations;
 	private final OrderDishInputRestMapper orderDishInputRestMapper;
 
 	public List<Order> getAll(Integer page, Integer size) {
@@ -36,7 +44,47 @@ public class OrderService {
 	}
 
 	public DishOrder updateDishOrder(String idOrder, String idDish, DishOrderToUpdate dishOrderToUpdate) {
-		DishOrder dishOrder = orderDishInputRestMapper.updateToModel(idOrder, idDish, dishOrderToUpdate.getStatus());
+		DishOrder dishOrder = dishOrderCrudOperations.findByIdDishAndIdOrder(idDish, idOrder);
+		if (dishOrderToUpdate.getStatus() == Status.CONFIRMED) {
+			if (dishOrder.getActualStatus() != Status.CREATED && dishOrder.getActualStatus() != Status.CONFIRMED) {
+				throw new ClientException("DishOrder is not in CREATED status");
+			}
+			System.out.println(dishOrder.getDish());
+			// if (dishOrder.getQuantity() > dishOrder.getDish().getAvailableQuantity()) {
+			// 	throw new ClientException("Not enough quantity of dish : " + dishOrder.getDish().getName());
+			// }
+			List<StockMovement> stockMovements = new ArrayList<>();
+			dishOrder.getDish().getIngredients().forEach(ingredient -> {
+				stockMovements.add(new StockMovement(
+					java.util.UUID.randomUUID().toString(),
+					ingredient,
+					dishOrder.getQuantity() * ingredient.getRequiredQuantity(),
+					ingredient.getUnit(),
+					StockMovementType.OUT,
+					Instant.now()
+					));
+			});
+			stockMovementCrudOperations.saveAll(stockMovements);
+			dishOrder.confirm();
+		} else if (dishOrderToUpdate.getStatus() == Status.CANCELED) {
+			dishOrder.cancel();
+		} else if (dishOrderToUpdate.getStatus() == Status.IN_PREPARATION) {
+			if (dishOrder.getActualStatus() != Status.CONFIRMED && dishOrder.getActualStatus() != Status.IN_PREPARATION) {
+				throw new ClientException("DishOrder is not in CONFIRMED status");
+			}
+			dishOrder.inPreparation();
+		} else if (dishOrderToUpdate.getStatus() == Status.COMPLETED) {
+			if (dishOrder.getActualStatus() != Status.IN_PREPARATION && dishOrder.getActualStatus() != Status.COMPLETED) {
+				throw new ClientException("DishOrder is not in IN_PREPARATION status");
+			}
+			dishOrder.complete();
+		} else if (dishOrderToUpdate.getStatus() == Status.DELIVERED) {
+			if (dishOrder.getActualStatus() != Status.COMPLETED && dishOrder.getActualStatus() != Status.DELIVERED) {
+				throw new ClientException("DishOrder is not in COMPLETED status");
+			}
+			dishOrder.deliver();
+		}
+		// DishOrder dishOrder = orderDishInputRestMapper.updateToModel(idOrder, idDish, dishOrderToUpdate.getStatus());
 		return dishOrderCrudOperations.save(dishOrder);
 	}
 

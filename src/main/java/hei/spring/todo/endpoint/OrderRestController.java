@@ -65,6 +65,8 @@ public class OrderRestController {
 			return ResponseEntity.ok().body(orderRest);
 		} catch (ServerException e) {
 			return ResponseEntity.internalServerError().body(e.getMessage());
+		} catch (ClientException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 }
