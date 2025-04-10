@@ -40,6 +40,33 @@ public class OrderService {
 			.map(dish -> orderDishInputRestMapper.toModel(id , dish)).toList();
 		Order order = orderCrudOperations.findById(id);
 		order.setListDish(dishOrder);
+		if (orderToUpdate.getStatus() == Status.CONFIRMED) {
+			if (order.getActualStatus() != Status.CREATED && order.getActualStatus() != Status.CONFIRMED) {
+				throw new ClientException("Order status is not created or confirmed");
+			}
+			int confirmCount = 0;
+			for (DishOrder dishOrderToUpdate : order.getListDish()) {
+				if (dishOrderToUpdate.getQuantity() > dishOrderToUpdate.getDish().getAvailableQuantity()) {
+					throw new ClientException("Not enough quantity of dish : " + dishOrderToUpdate.getDish().getName());
+				} else {
+					confirmCount++;
+				}
+			}
+			// System.out.println(" confirmcount : "+confirmCount);
+			// System.out.println(" size :" +order.getListDish().size());
+			// System.out.println(" status :" +order.getActualStatus());
+			List<DishOrder> dishOrders = new ArrayList<>();
+			if (confirmCount == order.getListDish().size() && order.getActualStatus() == Status.CREATED) {
+				// System.out.println("name : 1");
+				for (DishOrder dishOrderToUpdate : order.getListDish()) {
+					dishOrders.add(updateDishOrder(id, dishOrderToUpdate.getDish().getIdDish(), new DishOrderToUpdate(Status.CONFIRMED)));
+				}
+			} else {
+				dishOrders = order.getListDish();
+			}
+			order.setListDish(dishOrders);;
+			order.confirm();
+		}
 		return orderCrudOperations.save(order);
 	}
 
@@ -47,24 +74,25 @@ public class OrderService {
 		DishOrder dishOrder = dishOrderCrudOperations.findByIdDishAndIdOrder(idDish, idOrder);
 		if (dishOrderToUpdate.getStatus() == Status.CONFIRMED) {
 			if (dishOrder.getActualStatus() != Status.CREATED && dishOrder.getActualStatus() != Status.CONFIRMED) {
-				throw new ClientException("DishOrder is not in CREATED status");
+				throw new ClientException("DishOrder is not in CREATED or CONFIRMED status");
 			}
-			System.out.println(dishOrder.getDish());
-			// if (dishOrder.getQuantity() > dishOrder.getDish().getAvailableQuantity()) {
-			// 	throw new ClientException("Not enough quantity of dish : " + dishOrder.getDish().getName());
-			// }
+			// System.out.println(dishOrder.getDish());
+			if (dishOrder.getQuantity() > dishOrder.getDish().getAvailableQuantity()) {
+				throw new ClientException("Not enough quantity of dish : " + dishOrder.getDish().getName());
+			}
 			List<StockMovement> stockMovements = new ArrayList<>();
 			dishOrder.getDish().getIngredients().forEach(ingredient -> {
 				stockMovements.add(new StockMovement(
 					java.util.UUID.randomUUID().toString(),
 					ingredient,
-					dishOrder.getQuantity() * ingredient.getRequiredQuantity(),
+					Math.ceil(dishOrder.getQuantity() * ingredient.getRequiredQuantity() * 100) / 100,
 					ingredient.getUnit(),
 					StockMovementType.OUT,
 					Instant.now()
 					));
 			});
 			stockMovementCrudOperations.saveAll(stockMovements);
+
 			dishOrder.confirm();
 		} else if (dishOrderToUpdate.getStatus() == Status.CANCELED) {
 			dishOrder.cancel();

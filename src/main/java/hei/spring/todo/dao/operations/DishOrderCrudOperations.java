@@ -26,7 +26,7 @@ public class DishOrderCrudOperations implements CrudOperations<DishOrder> {
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				DishOrder dish = dishOrderMapper.apply(resultSet);
-				System.out.println(dish.getCreatedAt());
+				// System.out.println(dish.getCreatedAt());
 				dishes.add(dish);
 			}
 		} catch (SQLException e) {

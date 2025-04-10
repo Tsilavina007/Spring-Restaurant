@@ -29,7 +29,7 @@ public class IngredientDishMapper implements Function<ResultSet, Ingredient> {
 		List<IngredientPrice> ingredientPrices = priceCrudOperations.findByIdIngredient(idIngredient);
 		List<StockMovement> ingredientStockMovements = stockMovementCrudOperations.findByIdIngredient(idIngredient);
 
-		System.out.println(resultSet.getDouble("required_quantity"));
+		// System.out.println(resultSet.getDouble("required_quantity"));
 		Ingredient ingredient = new Ingredient();
 		ingredient.setId(idIngredient);
 		ingredient.setRequiredQuantity(resultSet.getDouble("required_quantity"));

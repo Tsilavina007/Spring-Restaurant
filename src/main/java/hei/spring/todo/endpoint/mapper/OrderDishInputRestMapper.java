@@ -14,8 +14,8 @@ public class OrderDishInputRestMapper {
 	private DishOrderCrudOperations dishOrderCrudOperations;
 
 	public DishOrder toModel(String orderId, OrderDishInput orderDishInput) {
+		System.out.println(orderDishInput.getQuantity());
 		DishOrder dishOrderToUpdate = dishOrderCrudOperations.findByIdDishAndIdOrder(orderDishInput.getIdDish(), orderId);
-		System.out.println(dishOrderToUpdate);
 		dishOrderToUpdate.setQuantity(orderDishInput.getQuantity());
 		return dishOrderToUpdate;
 	}

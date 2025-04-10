@@ -86,7 +86,7 @@ public class DishOrder {
 
 	public void setQuantity(Integer quantity) {
 		if (this.status != Status.CREATED) {
-			throw new RuntimeException("DishOrder is not in CREATED status");
+			throw new RuntimeException("DishOrder is not in CREATED status to update quantity");
 		} else {
 			this.quantity = quantity;
 		}

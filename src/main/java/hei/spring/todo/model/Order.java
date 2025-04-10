@@ -96,49 +96,23 @@ public class Order {
 	}
 
 	public void confirm() {
-		int confirmCount = 0;
-		for (DishOrder dishOrder : this.listDish) {
-			if (dishOrder.getQuantity() > dishOrder.getDish().getAvailableQuantity()) {
-				throw new RuntimeException("Ingredient quantity is greater than available quantity in dish :" + dishOrder.getDish().getName());
-			} else {
-				confirmCount++;
-			}
-		}
-		if (confirmCount == this.listDish.size() && this.status == Status.CREATED) {
-			for (DishOrder dishOrder : this.listDish) {
-				dishOrder.confirm();
-			}
-			this.status = Status.CONFIRMED;
-			this.confirmedAt = Instant.now();
-		}
-
+		this.status = Status.CONFIRMED;
+		this.confirmedAt = Instant.now();
 	}
 
 	public void inPreparation() {
-		if (this.status == Status.CONFIRMED) {
-			this.status = Status.IN_PREPARATION;
-			this.inPreparationAt = Instant.now();
-		} else {
-			throw new RuntimeException("Order is not in CONFIRMED status");
-		}
+		this.status = Status.IN_PREPARATION;
+		this.inPreparationAt = Instant.now();
 	}
 
 	public void complete() {
-		if (this.status == Status.IN_PREPARATION) {
-			this.status = Status.COMPLETED;
-			this.completedAt = Instant.now();
-		} else {
-			throw new RuntimeException("Order is not in IN_PREPARATION status");
-		}
+		this.status = Status.COMPLETED;
+		this.completedAt = Instant.now();
 	}
 
 	public void deliver() {
-		if (this.status == Status.COMPLETED) {
-			this.status = Status.DELIVERED;
-			this.deliveredAt = Instant.now();
-		} else {
-			throw new RuntimeException("Order is not in COMPLETED status");
-		}
+		this.status = Status.DELIVERED;
+		this.deliveredAt = Instant.now();
 	}
 
 	public void cancel() {
