@@ -40,6 +40,7 @@ update dish_order set status = 'COMPLETED' where id_dish = '1' and id_order = 'o
 -- Update the dish order to 'DELIVERED'
 update dish_order set status = 'DELIVERED' where id_dish = '1' and id_order = 'order_1';
 
+UPDATE dish_order SET status='CREATED', completed_at=NULL, canceled_at=NULL, in_preparation_at=NULL, delivered_at=NULL WHERE id_dish='1' AND id_order='order_1';
 -- Insert another dish order and cancel it
 
 -- update dish_order set status = 'CANCELED' where id_dish = 'dish_2' and id_order = 'order_1';
