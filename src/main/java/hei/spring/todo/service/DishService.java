@@ -86,7 +86,7 @@ public class DishService {
 		List<Ingredient> ingredients = new ArrayList<>();
 		ingredientToAdd.forEach(ingredient -> dishIngredientsToAdd.add(new DishIngredient(idDish, ingredient.getIngredientId(), ingredient.getRequiredQuantity(), ingredient.getUnit())));
 		List<DishIngredient> dishIngredientsSaved = dishIngredientCrudOperations.saveAll(dishIngredientsToAdd);
-		System.out.println(dishIngredientsSaved);
+		// System.out.println(dishIngredientsSaved);
 		if (dishIngredientsSaved.size() > 0) {
 			dishIngredientsSaved.forEach(ingredient -> {
 				Ingredient newIngredient = ingredientCrudOperations.findById(ingredient.getIdIngredient());

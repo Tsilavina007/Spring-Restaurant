@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -102,6 +103,9 @@ public class IngredientService {
 		stocksToAdd.forEach(stock -> {
 			if (stock.getCreationDatetime() == null) {
 				stock.setCreationDatetime(Instant.now());
+			}
+			if (stock.getId() == null) {
+				stock.setId(UUID.randomUUID().toString());
 			}
 		});
 

@@ -11,7 +11,7 @@ public class DishOrderRestMapper implements Function<DishOrder, DishOrderRest> {
 
 	@Override
 	public DishOrderRest apply(DishOrder dishOrder) {
-		System.out.println(dishOrder.getPrice());
+		// System.out.println(dishOrder.getPrice());
 		return new DishOrderRest(
 			dishOrder.getDish().getIdDish(),
 			dishOrder.getDish().getName(),
