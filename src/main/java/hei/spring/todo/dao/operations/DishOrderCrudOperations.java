@@ -108,6 +108,7 @@ public class DishOrderCrudOperations implements CrudOperations<DishOrder> {
 				statement.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				return null;
 			}
 		} else {
 			String query = "UPDATE dish_order SET status = ?, created_at = ?, confirmed_at = ?, in_preparation_at = ?, completed_at = ?, delivered_at = ?, canceled_at = ?, quantity = ? WHERE id_order = ? AND id_dish = ?";
@@ -126,6 +127,7 @@ public class DishOrderCrudOperations implements CrudOperations<DishOrder> {
 				statement.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				return null;
 			}
 		}
 		return entity;

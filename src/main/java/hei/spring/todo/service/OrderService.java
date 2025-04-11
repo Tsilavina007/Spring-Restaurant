@@ -12,6 +12,7 @@ import hei.spring.todo.model.Status;
 import hei.spring.todo.model.StockMovement;
 import hei.spring.todo.model.StockMovementType;
 import hei.spring.todo.service.exception.ClientException;
+import hei.spring.todo.service.exception.ServerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -91,9 +92,16 @@ public class OrderService {
 					Instant.now()
 					));
 			});
-			stockMovementCrudOperations.saveAll(stockMovements);
 
 			dishOrder.confirm();
+
+			DishOrder save = dishOrderCrudOperations.save(dishOrder);
+			if (save != null) {
+				stockMovementCrudOperations.saveAll(stockMovements);
+				return save;
+			} else {
+				throw new ServerException("DishOrder not saved");
+			}
 		} else if (dishOrderToUpdate.getStatus() == Status.CANCELED) {
 			dishOrder.cancel();
 		} else if (dishOrderToUpdate.getStatus() == Status.IN_PREPARATION) {
