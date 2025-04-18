@@ -25,7 +25,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/TD6")
 public class SaleRestController {
 	private final SaleService saleService;
 	private final SaleRestMapper saleRestMapper;

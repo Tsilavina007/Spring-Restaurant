@@ -20,7 +20,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/TD5")
 public class OrderRestController {
 	private final OrderService orderService;
 	private final OrderRestMapper orderRestMapper;
