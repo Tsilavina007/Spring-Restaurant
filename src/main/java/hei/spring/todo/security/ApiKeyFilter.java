@@ -13,9 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class ApiKeyFilter extends OncePerRequestFilter {
-
-    @Value("${apikey}")
-    private String apiKey;
+    private String apiKey = System.getenv("API_KEY");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

@@ -8,29 +8,33 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Configuration
-public class CustomDataSource {  // <-- Renommé pour éviter le conflit
-	private final static int defaultPort = 5432;
-	private final String host = System.getenv("DATABASE_HOST");
-	private final String user = System.getenv("DATABASE_USER");
-	private final String password = System.getenv("DATABASE_PASSWORD");
-	private final String database = System.getenv("DATABASE_NAME");
+public class CustomDataSource {
+	private final String url = System.getenv("DATASOURCE_URL");
+	private final String user = System.getenv("DATASOURCE_USER");
+	private final String password = System.getenv("DATASOURCE_PASSWORD");
 	private final String jdbcUrl;
 
 	public CustomDataSource() {
-		jdbcUrl = "jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?user=postgres.ivznmbzcyxxmhzsrggyd&password=AqdSDm646ouBJfyW";
+		jdbcUrl = url;
 	}
-	// public CustomDataSource() {
-	// 	jdbcUrl = "jdbc:postgresql://postgres.ivznmbzcyxxmhzsrggyd:AqdSDm646ouBJfyW@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres";
-	// }
 	// public CustomDataSource() {
 	// 	jdbcUrl = "jdbc:postgresql://" + host + ":" + defaultPort + "/" + database;
 	// }
-
 	public Connection getConnection() {
 		try {
 			return DriverManager.getConnection(jdbcUrl, user, password);
 		} catch (SQLException e) {
 			throw new ServerException(e);
 		}
+
 	}
-}
+/*************  ✨ Windsurf Command ⭐  *************/
+	/**
+	 * Returns a connection to the database.
+	 *
+	 * @return a connection to the database
+	 * @throws ServerException if a database access error occurs
+	 */
+
+
+/*******  aea6c251-f976-4013-aa6b-f3f356911a69  *******/}
