@@ -84,14 +84,16 @@ public class DishService {
 		}
 		List<DishIngredient> dishIngredientsToAdd = new ArrayList<>();
 		List<Ingredient> ingredients = new ArrayList<>();
-		ingredientToAdd.forEach(ingredient -> dishIngredientsToAdd.add(new DishIngredient(idDish, ingredient.getIngredientId(), ingredient.getRequiredQuantity(), ingredient.getUnit())));
+		ingredientToAdd.forEach(ingredient -> {
+			Ingredient newIngredient = ingredientCrudOperations.findById(ingredient.getId());
+			dishIngredientsToAdd.add(new DishIngredient(idDish, ingredient.getId(), ingredient.getRequiredQuantity(), newIngredient.getUnit()));
+		});
 		List<DishIngredient> dishIngredientsSaved = dishIngredientCrudOperations.saveAll(dishIngredientsToAdd);
 		// System.out.println(dishIngredientsSaved);
 		if (dishIngredientsSaved.size() > 0) {
 			dishIngredientsSaved.forEach(ingredient -> {
 				Ingredient newIngredient = ingredientCrudOperations.findById(ingredient.getIdIngredient());
 				newIngredient.setRequiredQuantity(ingredient.getRequiredQuantity());
-				newIngredient.setUnit(ingredient.getUnit());
 				ingredients.add(newIngredient);
 			});
 			return ingredients;

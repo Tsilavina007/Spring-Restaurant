@@ -33,10 +33,11 @@ public class DishIngredientRestMapper {
 
 	public Ingredient toModel(CreateDishIngredient newIngredient) {
 		Ingredient ingredient = new Ingredient();
-		ingredient.setId(newIngredient.getIngredientId());
+		ingredient.setId(newIngredient.getId());
+		ingredient.setName(newIngredient.getName());
 		ingredient.setRequiredQuantity(newIngredient.getRequiredQuantity());
 		try {
-			Ingredient existingIngredient = ingredientCrudOperations.findById(newIngredient.getIngredientId());
+			Ingredient existingIngredient = ingredientCrudOperations.findById(newIngredient.getId());
 			ingredient.addPrices(existingIngredient.getPrices());
 			ingredient.addStockMovements(existingIngredient.getStockMovements());
 		} catch (NotFoundException e) {
