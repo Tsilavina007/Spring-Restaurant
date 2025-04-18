@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: spring-restaurant
-    env: java
-    buildCommand: "mvn clean package"
-    startCommand: "java -jar target/todo-0.0.1-SNAPSHOT"
-    repo: https://github.com/Tsilavina007/Spring-Restaurant
-    branch: master
