@@ -4,6 +4,7 @@ import hei.spring.todo.dao.CustomDataSource;
 import hei.spring.todo.dao.mapper.DishOrderMapper;
 import hei.spring.todo.model.DishOrder;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,23 @@ public class DishOrderCrudOperations implements CrudOperations<DishOrder> {
 		}
 		return dishes;
 	}
-
+	public List<DishOrder> getBestSales(LocalDate startDate, LocalDate endDate) {
+		List<DishOrder> dishes = new ArrayList<>();
+		String query = "SELECT id_dish, id_order, status, quantity, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM dish_order WHERE completed_at >= ? AND completed_at < ? ";
+		try (Connection connection = customDataSource.getConnection();
+		PreparedStatement statement = connection.prepareStatement(query)) {
+			statement.setTimestamp(1, Timestamp.valueOf(startDate.atStartOfDay()));
+			statement.setTimestamp(2, Timestamp.valueOf(endDate.plusDays(1).atStartOfDay()));
+			ResultSet resultSet = statement.executeQuery();
+			while (resultSet.next()) {
+				DishOrder dish = dishOrderMapper.apply(resultSet);
+				dishes.add(dish);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return dishes;
+	}
 	@Override
 	public List<DishOrder> getAll(int page, int size) {
 		List<DishOrder> orders = new ArrayList<>();

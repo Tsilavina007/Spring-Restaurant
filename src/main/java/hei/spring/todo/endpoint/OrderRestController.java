@@ -49,10 +49,12 @@ public class OrderRestController {
 			Order order = orderService.updateOrder(reference ,orderToUpdate);
 			OrderRest orderRest =  orderRestMapper.toRest(order);
 			return ResponseEntity.ok().body(orderRest);
-		} catch (ServerException e) {
-			return ResponseEntity.internalServerError().body(e.getMessage());
 		} catch (ClientException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+		} catch (ServerException e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
 		}
 	}
 
@@ -65,10 +67,12 @@ public class OrderRestController {
 			DishOrder order = orderService.updateDishOrder(reference, dishId ,orderToUpdate);
 			DishOrderRest orderRest =  dishOrderRestMapper.apply(order);
 			return ResponseEntity.ok().body(orderRest);
-		} catch (ServerException e) {
-			return ResponseEntity.internalServerError().body(e.getMessage());
 		} catch (ClientException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+		} catch (ServerException e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
 		}
 	}
 }

@@ -65,6 +65,10 @@ public class IngredientRestController {
 					.map(ingredient -> ingredientRestMapper.toRest(ingredient))
 					.toList();
 			return ResponseEntity.ok().body(ingredientsRest);
+		} catch (ClientException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
 		} catch (ServerException e) {
 			return ResponseEntity.internalServerError().body(e.getMessage());
 		}
@@ -73,30 +77,48 @@ public class IngredientRestController {
 	@PutMapping("/ingredients/{ingredientId}/prices")
 	public ResponseEntity<Object> updateIngredientPrices(@PathVariable String ingredientId,
 			@RequestBody List<CreateIngredientPrice> ingredientPrices) {
-		List<IngredientPrice> prices = ingredientPrices.stream()
-				.map(ingredientPrice -> new IngredientPrice(ingredientPrice.getAmount(),
-						ingredientPrice.getDateValue()))
-				.toList();
-		Ingredient ingredient = ingredientService.addPrices(ingredientId, prices);
-		if (ingredient != null) {
-			IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
-			return ResponseEntity.ok().body(ingredientRest);
+		try {
+			List<IngredientPrice> prices = ingredientPrices.stream()
+					.map(ingredientPrice -> new IngredientPrice(ingredientPrice.getAmount(),
+							ingredientPrice.getDateValue()))
+					.toList();
+			Ingredient ingredient = ingredientService.addPrices(ingredientId, prices);
+			if (ingredient != null) {
+				IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
+				return ResponseEntity.ok().body(ingredientRest);
+			}
+			return ResponseEntity.status(200).body("No price to add into Ingredient with id : " + ingredientId);
+		} catch (ClientException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+		} catch (ServerException e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
 		}
-		return ResponseEntity.status(200).body("No price to add into Ingredient with id : " + ingredientId);
 	}
+
 	@PutMapping("/ingredients/{ingredientId}/stockMovements")
 	public ResponseEntity<Object> SaveOrUpdateStockMovements(@PathVariable String ingredientId,
 			@RequestBody List<CreateStockMovement> stockMovements) {
-		List<StockMovement> stocks = stockMovements.stream()
-				.map(stockMovement -> new StockMovement(stockMovement.getId(), stockMovement.getType(),
-						stockMovement.getQuantity(), stockMovement.getUnit()))
-				.toList();
-		Ingredient ingredient = ingredientService.addStocks(ingredientId, stocks);
-		if (ingredient != null) {
-			IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
-			return ResponseEntity.ok().body(ingredientRest);
+
+		try {
+			List<StockMovement> stocks = stockMovements.stream()
+					.map(stockMovement -> new StockMovement(stockMovement.getId(), stockMovement.getType(),
+							stockMovement.getQuantity(), stockMovement.getUnit()))
+					.toList();
+			Ingredient ingredient = ingredientService.addStocks(ingredientId, stocks);
+			if (ingredient != null) {
+				IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
+				return ResponseEntity.ok().body(ingredientRest);
+			}
+			return ResponseEntity.status(200).body("No Stock to add into Ingredient with id : " + ingredientId);
+		} catch (ClientException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+		} catch (ServerException e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
 		}
-		return ResponseEntity.status(200).body("No Stock to add into Ingredient with id : " + ingredientId);
 	}
 
 	@GetMapping("/ingredients/{id}")
