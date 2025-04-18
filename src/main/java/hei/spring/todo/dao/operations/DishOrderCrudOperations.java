@@ -54,7 +54,7 @@ public class DishOrderCrudOperations implements CrudOperations<DishOrder> {
 	}
 	@Override
 	public List<DishOrder> getAll(int page, int size) {
-		List<DishOrder> orders = new ArrayList<>();
+		List<DishOrder> dishOrders = new ArrayList<>();
 		String query = "SELECT id_order, id_dish, status, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM dish_order LIMIT ? OFFSET ?";
 		try (Connection connection = customDataSource.getConnection();
 		PreparedStatement statement = connection.prepareStatement(query)) {
@@ -63,16 +63,16 @@ public class DishOrderCrudOperations implements CrudOperations<DishOrder> {
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				DishOrder order = dishOrderMapper.apply(resultSet);
-				orders.add(order);
+				dishOrders.add(order);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return orders;
+		return dishOrders;
 	}
 
 	public DishOrder findByIdDishAndIdOrder(String idDish, String idOrder) {
-		DishOrder order = new DishOrder();
+		DishOrder dishOrder = new DishOrder();
 		String query = "SELECT id_order, id_dish, quantity, status, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM dish_order WHERE id_order = ? AND id_dish = ?";
 		try (Connection connection = customDataSource.getConnection();
 		PreparedStatement statement = connection.prepareStatement(query)) {
@@ -80,31 +80,31 @@ public class DishOrderCrudOperations implements CrudOperations<DishOrder> {
 			statement.setString(2, idDish);
 			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next()) {
-				order = dishOrderMapper.apply(resultSet);
+				dishOrder = dishOrderMapper.apply(resultSet);
 			} else {
 				return null;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return order;
+		return dishOrder;
 	}
 
 	@Override
 	public DishOrder findById(String id) {
-		DishOrder order = new DishOrder();
+		DishOrder dishOrder = new DishOrder();
 		String query = "SELECT id_order, id_dish, status, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM dish_order WHERE id_order = ?";
 		try (Connection connection = customDataSource.getConnection();
 		PreparedStatement statement = connection.prepareStatement(query)) {
 			statement.setString(1, id);
 			ResultSet resultSet = statement.executeQuery();
 			if (resultSet.next()) {
-				order = dishOrderMapper.apply(resultSet);
+				dishOrder = dishOrderMapper.apply(resultSet);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return order;
+		return dishOrder;
 	}
 
 	public DishOrder save(DishOrder entity) {

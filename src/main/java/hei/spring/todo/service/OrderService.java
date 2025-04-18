@@ -68,6 +68,7 @@ public class OrderService {
 	}
 
 	public DishOrder updateDishOrder(String idOrder, String idDish, DishOrderToUpdate dishOrderToUpdate) {
+		List<DishOrder> listDishOrder = dishOrderCrudOperations.getAllDishOrderByidOrder(idOrder);
 		DishOrder dishOrder = dishOrderCrudOperations.findByIdDishAndIdOrder(idDish, idOrder);
 		if (dishOrderToUpdate.getStatus() == Status.CONFIRMED) {
 			if (dishOrder.getActualStatus() != Status.CREATED && dishOrder.getActualStatus() != Status.CONFIRMED) {
@@ -94,6 +95,17 @@ public class OrderService {
 			DishOrder save = dishOrderCrudOperations.save(dishOrder);
 			if (save != null) {
 				stockMovementCrudOperations.saveAll(stockMovements);
+				int n = 0;
+				for (DishOrder elm : listDishOrder) {
+					if (elm.getActualStatus() == Status.CONFIRMED) {
+						n++;
+					}
+				}
+				if (n == listDishOrder.size()) {
+					Order orderToUpdate = orderCrudOperations.findById(idOrder);
+					orderToUpdate.setStatus(Status.CONFIRMED);
+					orderCrudOperations.save(orderToUpdate);
+				}
 				return save;
 			} else {
 				throw new ServerException("DishOrder not saved");
