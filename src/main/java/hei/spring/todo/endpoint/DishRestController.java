@@ -71,6 +71,10 @@ public class DishRestController {
 					.map(ingredient -> ingredientRestMapper.toRest(ingredient))
 					.toList();
 			return ResponseEntity.ok().body(ingredientsRest);
+		} catch (ClientException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
 		} catch (ServerException e) {
 			return ResponseEntity.internalServerError().body(e.getMessage());
 		}
@@ -85,6 +89,10 @@ public class DishRestController {
 					.map(ingredient -> dishIngredientRestMapper.toRest(ingredient))
 					.toList();
 			return ResponseEntity.ok().body(ingredientsRest);
+		} catch (ClientException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
 		} catch (ServerException e) {
 			return ResponseEntity.internalServerError().body(e.getMessage());
 		}

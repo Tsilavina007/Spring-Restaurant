@@ -53,12 +53,8 @@ public class OrderService {
 					confirmCount++;
 				}
 			}
-			// System.out.println(" confirmcount : "+confirmCount);
-			// System.out.println(" size :" +order.getListDish().size());
-			// System.out.println(" status :" +order.getActualStatus());
 			List<DishOrder> dishOrders = new ArrayList<>();
 			if (confirmCount == order.getListDish().size() && order.getActualStatus() == Status.CREATED) {
-				// System.out.println("name : 1");
 				for (DishOrder dishOrderToUpdate : order.getListDish()) {
 					dishOrders.add(updateDishOrder(id, dishOrderToUpdate.getDish().getIdDish(), new DishOrderToUpdate(Status.CONFIRMED)));
 				}
