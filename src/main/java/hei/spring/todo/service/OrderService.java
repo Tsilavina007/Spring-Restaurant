@@ -103,7 +103,7 @@ public class OrderService {
 				}
 				if (n == listDishOrder.size()) {
 					Order orderToUpdate = orderCrudOperations.findById(idOrder);
-					orderToUpdate.setStatus(Status.CONFIRMED);
+					orderToUpdate.confirm();
 					orderCrudOperations.save(orderToUpdate);
 				}
 				return save;
@@ -111,20 +111,64 @@ public class OrderService {
 				throw new ServerException("DishOrder not saved");
 			}
 		} else if (dishOrderToUpdate.getStatus() == Status.CANCELED) {
+			int n = 0;
+				for (DishOrder elm : listDishOrder) {
+					if (elm.getActualStatus() == Status.CANCELED) {
+						n++;
+					}
+				}
+				if (n == listDishOrder.size()) {
+					Order orderToUpdate = orderCrudOperations.findById(idOrder);
+					orderToUpdate.cancel();
+					orderCrudOperations.save(orderToUpdate);
+				}
 			dishOrder.cancel();
 		} else if (dishOrderToUpdate.getStatus() == Status.IN_PREPARATION) {
 			if (dishOrder.getActualStatus() != Status.CONFIRMED && dishOrder.getActualStatus() != Status.IN_PREPARATION) {
 				throw new ClientException("DishOrder is not in CONFIRMED status");
+			}
+			int n = 0;
+			for (DishOrder elm : listDishOrder) {
+				if (elm.getActualStatus() == Status.IN_PREPARATION) {
+					n++;
+				}
+			}
+			if (n == listDishOrder.size()) {
+				Order orderToUpdate = orderCrudOperations.findById(idOrder);
+				orderToUpdate.inPreparation();
+				orderCrudOperations.save(orderToUpdate);
 			}
 			dishOrder.inPreparation();
 		} else if (dishOrderToUpdate.getStatus() == Status.COMPLETED) {
 			if (dishOrder.getActualStatus() != Status.IN_PREPARATION && dishOrder.getActualStatus() != Status.COMPLETED) {
 				throw new ClientException("DishOrder is not in IN_PREPARATION status");
 			}
+			int n = 0;
+			for (DishOrder elm : listDishOrder) {
+				if (elm.getActualStatus() == Status.COMPLETED) {
+					n++;
+				}
+			}
+			if (n == listDishOrder.size()) {
+				Order orderToUpdate = orderCrudOperations.findById(idOrder);
+				orderToUpdate.complete();
+				orderCrudOperations.save(orderToUpdate);
+			}
 			dishOrder.complete();
 		} else if (dishOrderToUpdate.getStatus() == Status.DELIVERED) {
 			if (dishOrder.getActualStatus() != Status.COMPLETED && dishOrder.getActualStatus() != Status.DELIVERED) {
 				throw new ClientException("DishOrder is not in COMPLETED status");
+			}
+			int n = 0;
+			for (DishOrder elm : listDishOrder) {
+				if (elm.getActualStatus() == Status.DELIVERED) {
+					n++;
+				}
+			}
+			if (n == listDishOrder.size()) {
+				Order orderToUpdate = orderCrudOperations.findById(idOrder);
+				orderToUpdate.deliver();
+				orderCrudOperations.save(orderToUpdate);
 			}
 			dishOrder.deliver();
 		}
