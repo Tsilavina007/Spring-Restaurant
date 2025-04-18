@@ -17,8 +17,14 @@ public class CustomDataSource {  // <-- Renommé pour éviter le conflit
 	private final String jdbcUrl;
 
 	public CustomDataSource() {
-		jdbcUrl = "jdbc:postgresql://" + host + ":" + defaultPort + "/" + database;
+		jdbcUrl = "jdbc:postgresql://aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?user=postgres.ivznmbzcyxxmhzsrggyd&password=AqdSDm646ouBJfyW";
 	}
+	// public CustomDataSource() {
+	// 	jdbcUrl = "jdbc:postgresql://postgres.ivznmbzcyxxmhzsrggyd:AqdSDm646ouBJfyW@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres";
+	// }
+	// public CustomDataSource() {
+	// 	jdbcUrl = "jdbc:postgresql://" + host + ":" + defaultPort + "/" + database;
+	// }
 
 	public Connection getConnection() {
 		try {
