@@ -28,8 +28,8 @@ public class OrderService {
 	private final StockMovementCrudOperations stockMovementCrudOperations;
 	private final OrderDishInputRestMapper orderDishInputRestMapper;
 
-	public List<Order> getAll(Integer page, Integer size) {
-		return orderCrudOperations.getAll(page, size);
+	public List<Order> getAll() {
+		return orderCrudOperations.getAll(0, 0);
 	}
 
 	public Order getByReference(String id) {

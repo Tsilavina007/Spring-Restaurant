@@ -23,11 +23,11 @@ public class OrderCrudOperations implements CrudOperations<Order> {
 	@Override
 	public List<Order> getAll(int page, int size) {
 		List<Order> orders = new ArrayList<>();
-		String query = "SELECT id_order, status, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM orders LIMIT ? OFFSET ?";
+		String query = "SELECT id_order, status, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM orders";
 		try (Connection connection = customDataSource.getConnection();
 		PreparedStatement statement = connection.prepareStatement(query)) {
-			statement.setInt(1, size);
-			statement.setInt(2, (page - 1) * size);
+			// statement.setInt(1, size);
+			// statement.setInt(2, (page - 1) * size);
 			ResultSet resultSet = statement.executeQuery();
 			while (resultSet.next()) {
 				Order order = orderMapper.apply(resultSet);

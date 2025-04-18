@@ -4,6 +4,7 @@ import hei.spring.todo.endpoint.mapper.DishOrderRestMapper;
 import hei.spring.todo.endpoint.mapper.OrderRestMapper;
 import hei.spring.todo.endpoint.rest.DishOrderRest;
 import hei.spring.todo.endpoint.rest.DishOrderToUpdate;
+import hei.spring.todo.endpoint.rest.DishRest;
 import hei.spring.todo.endpoint.rest.OrderRest;
 import hei.spring.todo.endpoint.rest.OrderToUpdate;
 import hei.spring.todo.model.DishOrder;
@@ -18,12 +19,32 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class OrderRestController {
 	private final OrderService orderService;
 	private final OrderRestMapper orderRestMapper;
 	private final DishOrderRestMapper dishOrderRestMapper;
+
+	@GetMapping("/orders")
+	public ResponseEntity<Object> getAllOrder() {
+		try {
+			List<Order> orders = orderService.getAll();
+			List<OrderRest> orderRests = orders.stream()
+								.map(order -> orderRestMapper.toRest(order))
+								.toList();
+			// OrderRest orderRest = orderRestMapper.toRest(order);
+			return ResponseEntity.ok().body(orderRests);
+		} catch (ClientException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+		} catch (ServerException e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
 
 	@GetMapping("/orders/{reference}")
 	public ResponseEntity<Object> getOrder(@PathVariable String reference) {
