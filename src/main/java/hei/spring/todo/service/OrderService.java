@@ -95,7 +95,7 @@ public class OrderService {
 			DishOrder save = dishOrderCrudOperations.save(dishOrder);
 			if (save != null) {
 				stockMovementCrudOperations.saveAll(stockMovements);
-				int n = 0;
+				int n = 1;
 				for (DishOrder elm : listDishOrder) {
 					if (elm.getActualStatus() == Status.CONFIRMED) {
 						n++;
@@ -111,7 +111,7 @@ public class OrderService {
 				throw new ServerException("DishOrder not saved");
 			}
 		} else if (dishOrderToUpdate.getStatus() == Status.CANCELED) {
-			int n = 0;
+			int n = 1;
 				for (DishOrder elm : listDishOrder) {
 					if (elm.getActualStatus() == Status.CANCELED) {
 						n++;
@@ -127,7 +127,7 @@ public class OrderService {
 			if (dishOrder.getActualStatus() != Status.CONFIRMED && dishOrder.getActualStatus() != Status.IN_PREPARATION) {
 				throw new ClientException("DishOrder is not in CONFIRMED status");
 			}
-			int n = 0;
+			int n = 1;
 			for (DishOrder elm : listDishOrder) {
 				if (elm.getActualStatus() == Status.IN_PREPARATION) {
 					n++;
@@ -143,7 +143,7 @@ public class OrderService {
 			if (dishOrder.getActualStatus() != Status.IN_PREPARATION && dishOrder.getActualStatus() != Status.COMPLETED) {
 				throw new ClientException("DishOrder is not in IN_PREPARATION status");
 			}
-			int n = 0;
+			int n = 1;
 			for (DishOrder elm : listDishOrder) {
 				if (elm.getActualStatus() == Status.COMPLETED) {
 					n++;
@@ -159,7 +159,7 @@ public class OrderService {
 			if (dishOrder.getActualStatus() != Status.COMPLETED && dishOrder.getActualStatus() != Status.DELIVERED) {
 				throw new ClientException("DishOrder is not in COMPLETED status");
 			}
-			int n = 0;
+			int n = 1;
 			for (DishOrder elm : listDishOrder) {
 				if (elm.getActualStatus() == Status.DELIVERED) {
 					n++;
