@@ -35,6 +35,9 @@ public class DishIngredientRest {
 		return ;
 	}
 	public Double getActualPrice() {
+		if (this.prices.size() == 0) {
+			return 0.0;
+		}
 		return findActualPrice().orElse(new PriceRest(0.0)).getPrice();
 	}
 

@@ -23,11 +23,17 @@ public class DishIngredientRestMapper {
 	private IngredientCrudOperations ingredientCrudOperations;
 
 	public DishIngredientRest toRest(Ingredient ingredient) {
-		List<PriceRest> prices = ingredient.getPrices().stream()
-				.map(price -> priceRestMapper.apply(price)).toList();
-		List<StockMovementRest> stockMovementRests = ingredient.getStockMovements().stream()
-				.map(stockMovement -> stockMovementRestMapper.apply(stockMovement))
-				.toList();
+		List<PriceRest> prices = new ArrayList<>();
+		List<StockMovementRest> stockMovementRests = new ArrayList<>();
+		if (ingredient.getPrices().size() > 0) {
+			prices = ingredient.getPrices().stream()
+					.map(price -> priceRestMapper.apply(price)).toList();
+		}
+		if (ingredient.getStockMovements().size() > 0) {
+			stockMovementRests = ingredient.getStockMovements().stream()
+					.map(stockMovement -> stockMovementRestMapper.apply(stockMovement))
+					.toList();
+		}
 		return new DishIngredientRest(ingredient.getId(), ingredient.getName(), ingredient.getRequiredQuantity(), ingredient.getUnit() , prices, stockMovementRests);
 	}
 
@@ -36,6 +42,7 @@ public class DishIngredientRestMapper {
 		ingredient.setId(newIngredient.getId());
 		ingredient.setName(newIngredient.getName());
 		ingredient.setRequiredQuantity(newIngredient.getRequiredQuantity());
+		ingredient.setUnit(newIngredient.getUnit());
 		try {
 			Ingredient existingIngredient = ingredientCrudOperations.findById(newIngredient.getId());
 			ingredient.addPrices(existingIngredient.getPrices());

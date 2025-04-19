@@ -28,13 +28,4 @@ public class CustomDataSource {
 		}
 
 	}
-/*************  ✨ Windsurf Command ⭐  *************/
-	/**
-	 * Returns a connection to the database.
-	 *
-	 * @return a connection to the database
-	 * @throws ServerException if a database access error occurs
-	 */
-
-
-/*******  aea6c251-f976-4013-aa6b-f3f356911a69  *******/}
+}

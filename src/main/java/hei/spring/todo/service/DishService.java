@@ -4,12 +4,14 @@ import hei.spring.todo.dao.operations.DishCrudOperations;
 import hei.spring.todo.dao.operations.DishIngredientCrudOperations;
 import hei.spring.todo.dao.operations.IngredientCrudOperations;
 import hei.spring.todo.dao.operations.StockMovementCrudOperations;
+import hei.spring.todo.endpoint.mapper.DishIngredientRestMapper;
 import hei.spring.todo.endpoint.rest.CreateDishIngredient;
 import hei.spring.todo.model.Dish;
 import hei.spring.todo.model.DishIngredient;
 import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.model.StockMovement;
 import hei.spring.todo.service.exception.ClientException;
+import hei.spring.todo.service.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ public class DishService {
 	private final DishCrudOperations dishCrudOperations;
 	private final DishIngredientCrudOperations dishIngredientCrudOperations;
 	private final StockMovementCrudOperations stockMovementCrudOperations;
+	private final DishIngredientRestMapper dishIngredientRestMapper;
 
 	public List<Dish> getDishesByPrices(Integer page, Integer size, Double priceMinFilter, Double priceMaxFilter) {
 		if (priceMinFilter != null && priceMinFilter < 0) {
@@ -85,8 +88,12 @@ public class DishService {
 		List<DishIngredient> dishIngredientsToAdd = new ArrayList<>();
 		List<Ingredient> ingredients = new ArrayList<>();
 		ingredientToAdd.forEach(ingredient -> {
-			Ingredient newIngredient = ingredientCrudOperations.findById(ingredient.getId());
-			dishIngredientsToAdd.add(new DishIngredient(idDish, ingredient.getId(), ingredient.getRequiredQuantity(), newIngredient.getUnit()));
+			try {
+				ingredientCrudOperations.findById(ingredient.getId());
+			} catch (NotFoundException e) {
+				ingredientCrudOperations.saveAll(List.of(dishIngredientRestMapper.toModel(ingredient)));
+			}
+			dishIngredientsToAdd.add(new DishIngredient(idDish, ingredient.getId(), ingredient.getRequiredQuantity(), ingredient.getUnit()));
 		});
 		List<DishIngredient> dishIngredientsSaved = dishIngredientCrudOperations.saveAll(dishIngredientsToAdd);
 		// System.out.println(dishIngredientsSaved);
@@ -94,6 +101,7 @@ public class DishService {
 			dishIngredientsSaved.forEach(ingredient -> {
 				Ingredient newIngredient = ingredientCrudOperations.findById(ingredient.getIdIngredient());
 				newIngredient.setRequiredQuantity(ingredient.getRequiredQuantity());
+				newIngredient.setUnit(ingredient.getUnit());
 				ingredients.add(newIngredient);
 			});
 			return ingredients;
