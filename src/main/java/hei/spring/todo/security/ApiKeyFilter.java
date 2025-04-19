@@ -2,7 +2,6 @@ package hei.spring.todo.security;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 

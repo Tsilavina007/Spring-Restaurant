@@ -2,12 +2,9 @@ package hei.spring.todo.endpoint;
 
 import hei.spring.todo.endpoint.mapper.DishOrderRestMapper;
 import hei.spring.todo.endpoint.mapper.OrderRestMapper;
-import hei.spring.todo.endpoint.rest.DishOrderRest;
 import hei.spring.todo.endpoint.rest.DishOrderToUpdate;
-import hei.spring.todo.endpoint.rest.DishRest;
 import hei.spring.todo.endpoint.rest.OrderRest;
 import hei.spring.todo.endpoint.rest.OrderToUpdate;
-import hei.spring.todo.model.DishOrder;
 import hei.spring.todo.model.Order;
 import hei.spring.todo.service.OrderService;
 import hei.spring.todo.service.exception.ClientException;
@@ -61,6 +58,21 @@ public class OrderRestController {
 		}
 	}
 
+	@PutMapping("/orders/{reference}")
+	public ResponseEntity<Object> saveOrder(@PathVariable String reference) {
+		try {
+			Order order = orderService.saveByReference(reference);
+			OrderRest orderRest = orderRestMapper.toRest(order);
+			return ResponseEntity.ok().body(orderRest);
+		} catch (ClientException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		} catch (NotFoundException e) {
+			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+		} catch (ServerException e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
+
 	@PutMapping("/orders/{reference}/dishes")
 	public ResponseEntity<Object> updateOrder(
 			@PathVariable String reference,
@@ -84,8 +96,8 @@ public class OrderRestController {
 			@PathVariable String dishId,
 			@RequestBody DishOrderToUpdate orderToUpdate) {
 		try {
-			DishOrder order = orderService.updateDishOrder(reference, dishId ,orderToUpdate);
-			DishOrderRest orderRest =  dishOrderRestMapper.apply(order);
+			Order order = orderService.updateDishOrders(reference, dishId ,orderToUpdate);
+			OrderRest orderRest = orderRestMapper.toRest(order);
 			return ResponseEntity.ok().body(orderRest);
 		} catch (ClientException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());

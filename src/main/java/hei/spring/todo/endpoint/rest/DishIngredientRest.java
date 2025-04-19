@@ -20,6 +20,7 @@ import static hei.spring.todo.model.StockMovementType.OUT;
 public class DishIngredientRest {
 	private String idIngredient;
 	private String name;
+	private CreateOrUpdateIngredient ingredient;
 	private Double requiredQuantity;
 	private Unit unit;
 	private List<PriceRest> prices;
@@ -34,6 +35,18 @@ public class DishIngredientRest {
 	public void getStockMovements() {
 		return ;
 	}
+
+	@JsonIgnore
+	public void getIdIngredient() {
+		return ;
+	}
+
+	@JsonIgnore
+	public void getName() {
+		return ;
+	}
+
+	@JsonIgnore
 	public Double getActualPrice() {
 		if (this.prices.size() == 0) {
 			return 0.0;
@@ -44,6 +57,8 @@ public class DishIngredientRest {
 	private Optional<PriceRest> findActualPrice() {
 		return prices.stream().max(Comparator.comparing(PriceRest::getDateValue));
 	}
+
+	@JsonIgnore
 	public Double getAvailableQuantity() {
 		return getAvailableQuantityAt(Instant.now());
 	}

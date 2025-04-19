@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class OrderRest {
-	private String reference;
-	private Status status;
+	private String id;
+	private Status actualStatus;
 	private Double totalAmount;
 	private List<DishOrderRest> dishes;
 }

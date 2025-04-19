@@ -1,5 +1,7 @@
 package hei.spring.todo.endpoint.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import hei.spring.todo.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +13,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class DishOrderRest {
-	private String idDish;
+	private String id;
 	private String name;
 	private Double currentPrice;
-	private Integer quantity;
-	private Status status;
+	private Integer quantityOrdered;
+	private Status actualOrderStatus;
+
+	@JsonIgnore
+	public void getCurrentPrice() {
+		return ;
+	}
 }

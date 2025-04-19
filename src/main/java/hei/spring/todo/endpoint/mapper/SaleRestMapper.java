@@ -10,7 +10,7 @@ import java.time.ZoneId;
 public class SaleRestMapper {
 	public SaleRest toRest(DishOrder dishOrder) {
 
-		return new SaleRest(dishOrder.getDish().getName(), dishOrder.getQuantity(), dishOrder.getPriceWithDateTime(dishOrder.getCompletedAt().atZone(ZoneId.systemDefault()).toLocalDate()));
+		return new SaleRest(dishOrder.getDish().getIdDish(), dishOrder.getDish().getName(), dishOrder.getQuantity(), dishOrder.getPriceWithDateTime(dishOrder.getCompletedAt().atZone(ZoneId.systemDefault()).toLocalDate()));
 	}
 
 }

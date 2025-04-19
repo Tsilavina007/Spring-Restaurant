@@ -12,6 +12,6 @@ import lombok.Setter;
 @Setter
 @Data
 public class OrderDishInput {
-	private String idDish;
-	private Integer quantity;
+	private String dishIdentifier;
+	private Integer quantityOrdered;
 }

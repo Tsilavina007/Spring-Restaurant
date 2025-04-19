@@ -15,6 +15,6 @@ import lombok.Setter;
 @Setter
 @Data
 public class OrderToUpdate {
-	private Status status;
+	private Status orderStatus;
 	private List<OrderDishInput> dishes;
 }

@@ -36,12 +36,17 @@ public class OrderService {
 		return orderCrudOperations.findById(id);
 	}
 
+	public Order saveByReference(String id) {
+		Order order = new Order(id);
+		return orderCrudOperations.save(order);
+	}
+
 	public Order updateOrder(String id, OrderToUpdate orderToUpdate) {
 		List<DishOrder> dishOrder = orderToUpdate.getDishes().stream()
 			.map(dish -> orderDishInputRestMapper.toModel(id , dish)).toList();
 		Order order = orderCrudOperations.findById(id);
 		order.setListDish(dishOrder);
-		if (orderToUpdate.getStatus() == Status.CONFIRMED) {
+		if (orderToUpdate.getOrderStatus() == Status.CONFIRMED) {
 			if (order.getActualStatus() != Status.CREATED && order.getActualStatus() != Status.CONFIRMED) {
 				throw new ClientException("Order status is not created or confirmed");
 			}
@@ -65,6 +70,11 @@ public class OrderService {
 			order.confirm();
 		}
 		return orderCrudOperations.save(order);
+	}
+
+	public Order updateDishOrders(String idOrder, String idDish, DishOrderToUpdate dishOrderToUpdate) {
+		updateDishOrder(idOrder, idDish, dishOrderToUpdate);
+		return orderCrudOperations.findById(idOrder);
 	}
 
 	public DishOrder updateDishOrder(String idOrder, String idDish, DishOrderToUpdate dishOrderToUpdate) {

@@ -95,7 +95,7 @@ public class DishRest {
 		return result;
 	}
 
-
+	@JsonIgnore
 	public Double getIngredientsCost() {
 		int total = 0;
 		if (this.ingredients != null) {
@@ -105,7 +105,8 @@ public class DishRest {
 		}
 		return (double) total;
 	}
-
+	
+	@JsonIgnore
 	public Double getGrossMargin() {
 		return this.getActualPrice() - getIngredientsCost();
 	}

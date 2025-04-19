@@ -10,10 +10,8 @@ import org.springframework.stereotype.Repository;
 import hei.spring.todo.dao.CustomDataSource;
 import hei.spring.todo.dao.mapper.DishMapper;
 import hei.spring.todo.model.Dish;
-import hei.spring.todo.model.Ingredient;
 import hei.spring.todo.service.exception.NotFoundException;
 import hei.spring.todo.service.exception.ServerException;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 @Repository

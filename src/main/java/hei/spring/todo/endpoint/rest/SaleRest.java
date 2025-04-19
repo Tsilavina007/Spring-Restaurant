@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class SaleRest {
+	private String dishIdentifier;
 	private String dishName;
 	private Integer quantitySold;
 	private Double totalAmount;
