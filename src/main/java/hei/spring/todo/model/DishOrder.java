@@ -28,6 +28,7 @@ public class DishOrder {
 	private Instant completedAt;
 	private Instant deliveredAt;
 	private Instant canceledAt;
+	private Double totalAmount;
 
 	public DishOrder(String idOrder, Dish dish, Integer quantity) {
 		this.idOrder = idOrder;
@@ -37,6 +38,12 @@ public class DishOrder {
 		this.createdAt = Instant.now();
 	}
 
+	public Double getProcessingTime() {
+		if (inPreparationAt == null || completedAt == null) {
+			return 0D;
+		}
+		return Math.round(((completedAt.toEpochMilli() - inPreparationAt.toEpochMilli()) / 1000.0 / quantity) * 1000) / 1000.0;
+	}
 	public List<StatusDate> getListStatus() {
 		List<StatusDate> listStatusDate = List.of(
 				new StatusDate(Status.CREATED, createdAt),

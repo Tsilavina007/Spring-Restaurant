@@ -35,9 +35,9 @@ public class DishOrderCrudOperations implements CrudOperations<DishOrder> {
 		}
 		return dishes;
 	}
-	public List<DishOrder> getBestSales(LocalDate startDate, LocalDate endDate) {
+	public List<DishOrder> getSales(LocalDate startDate, LocalDate endDate) {
 		List<DishOrder> dishes = new ArrayList<>();
-		String query = "SELECT id_dish, id_order, status, quantity, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM dish_order WHERE completed_at >= ? AND completed_at < ? ";
+		String query = "SELECT id_dish, id_order, status, quantity, created_at, confirmed_at, in_preparation_at, completed_at, delivered_at, canceled_at FROM dish_order WHERE completed_at >= ? AND completed_at < ?";
 		try (Connection connection = customDataSource.getConnection();
 		PreparedStatement statement = connection.prepareStatement(query)) {
 			statement.setTimestamp(1, Timestamp.valueOf(startDate.atStartOfDay()));

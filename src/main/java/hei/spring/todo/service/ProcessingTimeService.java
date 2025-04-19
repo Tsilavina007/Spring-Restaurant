@@ -8,15 +8,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SaleService {
+public class ProcessingTimeService {
 	private final DishOrderCrudOperations dishOrderCrudOperations;
 	private final SaleRestMapper saleRestMapper;
 
-	public List<DishOrder> getBestSales(LocalDate startdate, LocalDate endDate, Integer limit) {
+	public List<DishOrder> getBestProcessingTime(LocalDate startdate, LocalDate endDate, Integer limit) {
 		if (endDate == null) {
 			endDate = LocalDate.now();
 		}
@@ -25,22 +24,7 @@ public class SaleService {
 		}
 		List<DishOrder> dishes =  dishOrderCrudOperations.getSales(startdate, endDate);
 		dishes = dishes.stream()
-			.collect(Collectors.toMap(
-				dishOrder -> dishOrder.getDish().getIdDish(),
-				dishOrder -> new DishOrder(
-					dishOrder.getIdOrder(),
-					dishOrder.getDish(),
-					dishOrder.getQuantity()
-				),
-				(dishOrder1, dishOrder2) -> {
-					dishOrder1.setQuantity(dishOrder1.getQuantity() + dishOrder2.getQuantity());
-					dishOrder1.setTotalAmount(dishOrder1.getPrice() + dishOrder2.getPrice());
-					return dishOrder1;
-				}
-			))
-			.values()
-			.stream()
-			.sorted((dishOrder1, dishOrder2) -> dishOrder2.getQuantity() - dishOrder1.getQuantity())
+			.sorted((dishOrder1, dishOrder2) -> Double.compare(dishOrder2.getProcessingTime(), dishOrder1.getProcessingTime()))
 			.toList();
 		return dishes;
 	}

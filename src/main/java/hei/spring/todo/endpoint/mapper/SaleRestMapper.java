@@ -4,13 +4,13 @@ import hei.spring.todo.endpoint.rest.SaleRest;
 import hei.spring.todo.model.DishOrder;
 import org.springframework.stereotype.Component;
 
-import java.time.ZoneId;
-
 @Component
 public class SaleRestMapper {
 	public SaleRest toRest(DishOrder dishOrder) {
-
-		return new SaleRest(dishOrder.getDish().getIdDish(), dishOrder.getDish().getName(), dishOrder.getQuantity(), dishOrder.getPriceWithDateTime(dishOrder.getCompletedAt().atZone(ZoneId.systemDefault()).toLocalDate()));
+		if (dishOrder.getTotalAmount() == null || dishOrder.getTotalAmount() == 0 ) {
+			return new SaleRest(dishOrder.getDish().getIdDish(), dishOrder.getDish().getName(), dishOrder.getQuantity(), dishOrder.getPrice());
+		}
+		return new SaleRest(dishOrder.getDish().getIdDish(), dishOrder.getDish().getName(), dishOrder.getQuantity(), dishOrder.getTotalAmount());
 	}
 
 }
