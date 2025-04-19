@@ -29,31 +29,34 @@ public class DishPriceCrudOperations implements CrudOperations<DishPrice> {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+
+	@SneakyThrows
+	public DishPrice save(DishPrice dishPrice) {
+		DishPrice newDishPrice = new DishPrice();
+		try (Connection connection = customDataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(
+						"insert into dish_price (unit_price, update_datetime, id_dish) values (?, ?, ?)"
+								+ " returning unit_price, update_datetime, id_dish")) {
+			statement.setDouble(1, dishPrice.getUnitPrice());
+			statement.setDate(2, Date.valueOf(dishPrice.getUpdateDatetime()));
+			statement.setString(3, dishPrice.getIdDish());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
+					newDishPrice = priceMapper.apply(resultSet);
+					newDishPrice.setIdDish(dishPrice.getIdDish());
+				}
+			}
+		}
+		return newDishPrice;
+	}
 	@SneakyThrows
 	@Override
 	public List<DishPrice> saveAll(List<DishPrice> entities) {
 		List<DishPrice> prices = new ArrayList<>();
-		try (Connection connection = customDataSource.getConnection();
-				PreparedStatement statement = connection.prepareStatement(
-						"insert into dish_price (unit_price, update_datetime, id_dish) values (?, ?, ?)"
-								+ " returning unit_price, update_datetime, id_dish");) {
-			entities.forEach(entityToSave -> {
-				try {
-					statement.setDouble(1, entityToSave.getUnitPrice());
-					statement.setDate(2, Date.valueOf(entityToSave.getUpdateDatetime()));
-					statement.setString(3, entityToSave.getDish().getIdDish());
-					statement.addBatch(); // group by batch so executed as one query in database
-				} catch (SQLException e) {
-					throw new ServerException(e);
-				}
-			});
-			try (ResultSet resultSet = statement.executeQuery()) {
-				while (resultSet.next()) {
-					prices.add(priceMapper.apply(resultSet));
-				}
-			}
-			return prices;
-		}
+		entities.forEach(entityToSave -> {
+			prices.add(save(entityToSave));
+		});
+		return prices;
 	}
 
 	public List<DishPrice> findByIdDish(String idDish) {
@@ -67,6 +70,7 @@ public class DishPriceCrudOperations implements CrudOperations<DishPrice> {
 			try (ResultSet resultSet = statement.executeQuery()) {
 				while (resultSet.next()) {
 					DishPrice price = priceMapper.apply(resultSet);
+					price.setIdDish(idDish);
 					prices.add(price);
 				}
 				return prices;

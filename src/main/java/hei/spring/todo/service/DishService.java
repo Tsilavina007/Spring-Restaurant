@@ -77,6 +77,10 @@ public class DishService {
 		return dishCrudOperations.findById(id);
 	}
 
+	public List<Dish> saveAllDish(List<Dish> dishes) {
+		return dishCrudOperations.saveAll(dishes);
+	}
+
 	public List<Ingredient> saveAll(List<Ingredient> ingredients) {
 		return ingredientCrudOperations.saveAll(ingredients);
 	}
@@ -96,7 +100,6 @@ public class DishService {
 			dishIngredientsToAdd.add(new DishIngredient(idDish, ingredient.getId(), ingredient.getRequiredQuantity(), ingredient.getUnit()));
 		});
 		List<DishIngredient> dishIngredientsSaved = dishIngredientCrudOperations.saveAll(dishIngredientsToAdd);
-		// System.out.println(dishIngredientsSaved);
 		if (dishIngredientsSaved.size() > 0) {
 			dishIngredientsSaved.forEach(ingredient -> {
 				Ingredient newIngredient = ingredientCrudOperations.findById(ingredient.getIdIngredient());
@@ -121,7 +124,6 @@ public class DishService {
 		});
 
 		stocksToAdd.forEach(stock -> stock.setIngredient(ingredient));
-		// System.out.println(stocksToAdd);
 		List<StockMovement> stockMovementSaved = stockMovementCrudOperations.saveAll(stocksToAdd);
 		if (stockMovementSaved.size() > 0) {
 			ingredient.addStockMovements(stockMovementSaved);

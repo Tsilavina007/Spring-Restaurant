@@ -84,7 +84,6 @@ public class OrderService {
 			if (dishOrder.getActualStatus() != Status.CREATED && dishOrder.getActualStatus() != Status.CONFIRMED) {
 				throw new ClientException("DishOrder is not in CREATED or CONFIRMED status");
 			}
-			// System.out.println(dishOrder.getDish());
 			if (dishOrder.getQuantity() > dishOrder.getDish().getAvailableQuantity()) {
 				throw new ClientException("Not enough quantity of dish : " + dishOrder.getDish().getName());
 			}

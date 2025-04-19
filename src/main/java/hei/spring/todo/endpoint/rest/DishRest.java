@@ -12,11 +12,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
+@ToString
 public class DishRest {
 	private String id;
 	private String name;
@@ -24,10 +26,13 @@ public class DishRest {
 	private List<PriceRest> dishPrices;
 
 	@JsonIgnore
-	public void getDishPrices() {
-		return ;
+	public List<PriceRest> getDishPrices() {
+		return this.dishPrices;
 	}
 	public Double getActualPrice() {
+		if (dishPrices.size() == 0) {
+			return 0.0;
+		}
 		return findActualPrice().orElse(new PriceRest(0.0)).getPrice();
 	}
 
@@ -36,6 +41,9 @@ public class DishRest {
 	}
 
 	public int getAvailableQuantity() {
+		if (ingredients.size() == 0) {
+			return 0;
+		}
 		double total = this.ingredients.get(0).getAvailableQuantity();
 		for (DishIngredientRest ingredient : this.ingredients) {
 			if (total > (ingredient.getAvailableQuantity() / ingredient.getRequiredQuantity())) {
@@ -105,7 +113,7 @@ public class DishRest {
 		}
 		return (double) total;
 	}
-	
+
 	@JsonIgnore
 	public Double getGrossMargin() {
 		return this.getActualPrice() - getIngredientsCost();

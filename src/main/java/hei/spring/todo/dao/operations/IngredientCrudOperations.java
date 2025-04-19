@@ -95,7 +95,6 @@ public class IngredientCrudOperations implements CrudOperations<Ingredient> {
 					.prepareStatement("insert into ingredient (id_ingredient, name) values (?, ?)"
 							+ " on conflict (id_ingredient) do update set name=excluded.name"
 							+ " returning id_ingredient, name")) {
-				// System.out.println(entities);
 				entities.forEach(entityToSave -> {
 					try {
 						statement.setString(1, entityToSave.getId());

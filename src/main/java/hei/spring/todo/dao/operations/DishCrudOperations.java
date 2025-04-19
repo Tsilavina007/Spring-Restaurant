@@ -64,13 +64,40 @@ public class DishCrudOperations implements CrudOperations<Dish> {
 		}
 	}
 
-	@Override
-	public List<Dish> saveAll(List<Dish> entities) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'saveAll'");
+	@SneakyThrows
+	public Dish save(Dish dish) {
+		Dish newDish = new Dish();
+		try (Connection connection = customDataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(
+						"insert into dish (id_dish, name) values (?, ?)"
+								+ " on conflict (id_dish) do update set name=excluded.name"
+								+ " returning id_dish, name")) {
+			statement.setString(1, dish.getIdDish());
+			statement.setString(2, dish.getName());
+			try (ResultSet resultSet = statement.executeQuery()) {
+				if (resultSet.next()) {
+					newDish = dishMapper.apply(resultSet);
+				}
+			}
+			if (newDish.getDishPrices().size() == 0) {
+				newDish.setDishPrices(priceCrudOperations.saveAll(dish.getDishPrices()));
+			} else {
+				newDish.addPrices(priceCrudOperations.saveAll(dish.getDishPrices()));
+			}
+
+			return newDish;
+		}
 	}
 
-
+	@SneakyThrows
+	@Override
+	public List<Dish> saveAll(List<Dish> entities) {
+		List<Dish> dishes = new ArrayList<>();
+		entities.forEach(entityToSave -> {
+			dishes.add(save(entityToSave));
+		});
+		return dishes;
+	}
 
 	@SneakyThrows
 	public List<Dish> saveAll2(List<Dish> entities) {
@@ -80,7 +107,6 @@ public class DishCrudOperations implements CrudOperations<Dish> {
 							.prepareStatement("insert into dish (id_dish, name) values (?, ?)"
 									+ " on conflict (id_dih) do update set name=excluded.name"
 									+ " returning id_dish, name")) {
-						// System.out.println(entities);
 						entities.forEach(entityToSave -> {
 							try {
 								statement.setString(1, entityToSave.getIdDish());

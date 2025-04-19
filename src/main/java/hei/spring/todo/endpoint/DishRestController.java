@@ -4,6 +4,7 @@ import hei.spring.todo.endpoint.mapper.DishIngredientRestMapper;
 import hei.spring.todo.endpoint.mapper.DishRestMapper;
 import hei.spring.todo.endpoint.mapper.IngredientRestMapper;
 import hei.spring.todo.endpoint.rest.CreateDishIngredient;
+import hei.spring.todo.endpoint.rest.CreateOrUpdateDish;
 import hei.spring.todo.endpoint.rest.CreateOrUpdateIngredient;
 import hei.spring.todo.endpoint.rest.DishRest;
 import hei.spring.todo.endpoint.rest.IngredientRest;
@@ -54,22 +55,17 @@ public class DishRestController {
 		}
 	}
 
-	@PostMapping("/dishes")
-	public ResponseEntity<Object> addIngredients() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 	@PutMapping("/dishes")
-	public ResponseEntity<Object> updateIngredients(
-			@RequestBody List<CreateOrUpdateIngredient> ingredientsToCreateOrUpdate) {
+	public ResponseEntity<Object> saveDish(
+			@RequestBody List<CreateOrUpdateDish> dishesToCreateOrUpdate) {
 		try {
-			List<Ingredient> ingredients = ingredientsToCreateOrUpdate.stream()
-					.map(ingredient -> ingredientRestMapper.toModel(ingredient))
+			List<Dish> dishes = dishesToCreateOrUpdate.stream()
+					.map(dish -> dishRestMapper.dishToModel(dish))
 					.toList();
-			List<IngredientRest> ingredientsRest = ingredientService.saveAll(ingredients).stream()
-					.map(ingredient -> ingredientRestMapper.toRest(ingredient))
+			List<DishRest> dishesRest = dishService.saveAllDish(dishes).stream()
+					.map(dish -> dishRestMapper.toRest(dish))
 					.toList();
-			return ResponseEntity.ok().body(ingredientsRest);
+			return ResponseEntity.ok().body(dishesRest);
 		} catch (ClientException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		} catch (NotFoundException e) {

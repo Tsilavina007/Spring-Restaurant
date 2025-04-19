@@ -87,7 +87,6 @@ public class IngredientService {
 		});
 		pricesToAdd.forEach(price -> price.setIngredient(ingredient));
 		List<IngredientPrice> ingredientPriceSaved = ingredientPriceCrudOperations.saveAll(pricesToAdd);
-		// System.out.println(ingredientPriceSaved);
 		if (ingredientPriceSaved.size() > 0) {
 			ingredient.addPrices(ingredientPriceSaved);
 			return ingredient;
@@ -110,7 +109,6 @@ public class IngredientService {
 		});
 
 		stocksToAdd.forEach(stock -> stock.setIngredient(ingredient));
-		// System.out.println(stocksToAdd);
 		List<StockMovement> stockMovementSaved = stockMovementCrudOperations.saveAll(stocksToAdd);
 		if (stockMovementSaved.size() > 0) {
 			ingredient.addStockMovements(stockMovementSaved);

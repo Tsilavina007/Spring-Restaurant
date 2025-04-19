@@ -165,4 +165,17 @@ public class Dish {
 	public void addToListIngredient(Ingredient ingredient) {
 		this.ingredients.add(ingredient);
 	}
+
+	public void addPrice(DishPrice price) {
+		this.dishPrices.add(price);
+	}
+	public void addPrices(List<DishPrice> prices) {
+		this.dishPrices.addAll(prices);
+	}
+
+	public void addIngredients(List<Ingredient> ingredients) {
+		this.ingredients.addAll(ingredients);
+	}
+
+
 }

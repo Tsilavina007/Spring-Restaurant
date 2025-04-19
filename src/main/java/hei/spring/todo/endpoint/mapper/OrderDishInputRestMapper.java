@@ -17,10 +17,8 @@ public class OrderDishInputRestMapper {
 	private DishCrudOperations dishCrudOperations;
 
 	public DishOrder toModel(String orderId, OrderDishInput orderDishInput) {
-		// System.out.println(orderDishInput.getQuantity());
 		DishOrder dishOrderToUpdate = dishOrderCrudOperations.findByIdDishAndIdOrder(orderDishInput.getDishIdentifier(), orderId);
 		if (dishOrderToUpdate == null) {
-			System.out.println(orderDishInput.getDishIdentifier());
 			dishOrderToUpdate = dishOrderCrudOperations.save(new DishOrder(orderId, dishCrudOperations.findById(orderDishInput.getDishIdentifier()), orderDishInput.getQuantityOrdered()));
 		}
 		dishOrderToUpdate.setQuantity(orderDishInput.getQuantityOrdered());
@@ -29,7 +27,6 @@ public class OrderDishInputRestMapper {
 
 	public DishOrder updateToModel(String orderId, String dishId, Status status) {
 		DishOrder dishOrderToUpdate = dishOrderCrudOperations.findByIdDishAndIdOrder(dishId, orderId);
-		// System.out.println(dishOrderToUpdate.getStatus());
 		dishOrderToUpdate.setStatus(status);
 		return dishOrderToUpdate;
 	}
