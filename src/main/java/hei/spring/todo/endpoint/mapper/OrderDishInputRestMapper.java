@@ -6,8 +6,6 @@ import hei.spring.todo.endpoint.rest.OrderDishInput;
 import hei.spring.todo.model.DishOrder;
 import hei.spring.todo.model.Status;
 
-import java.time.Instant;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

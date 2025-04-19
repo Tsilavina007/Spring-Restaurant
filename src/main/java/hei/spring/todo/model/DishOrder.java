@@ -1,6 +1,7 @@
 package hei.spring.todo.model;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -51,6 +52,9 @@ public class DishOrder {
 		return (double) dish.getUnitPrice() * quantity;
 	}
 
+	public double getPriceWithDateTime(LocalDate updateDateTime) {
+		return (double) dish.getDishPriceWithDateTime(dish.getDishPrices(), updateDateTime).getUnitPrice() * quantity;
+	}
 	public void cancel() {
 		this.status = Status.CANCELED;
 		this.canceledAt = Instant.now();

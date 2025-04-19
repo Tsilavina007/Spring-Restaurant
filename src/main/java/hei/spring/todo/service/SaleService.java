@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,16 @@ public class SaleService {
 			startdate = LocalDate.of(1000, 1, 1);
 		}
 		List<DishOrder> dishes =  dishOrderCrudOperations.getBestSales(startdate, endDate);
+		dishes = dishes.stream()
+			.collect(Collectors.toMap(
+				dishOrder -> dishOrder.getDish().getIdDish(),
+				dishOrder -> dishOrder,
+				(dishOrder1, dishOrder2) -> dishOrder1.getQuantity() > dishOrder2.getQuantity() ? dishOrder1 : dishOrder2
+			))
+			.values()
+			.stream()
+			.sorted((dishOrder1, dishOrder2) -> dishOrder2.getQuantity() - dishOrder1.getQuantity())
+			.toList();
 		return dishes;
 	}
 }
